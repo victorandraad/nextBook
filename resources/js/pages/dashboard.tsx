@@ -3,6 +3,7 @@ import AppLayout from '@/layouts/app-layout';
 import { type BreadcrumbItem } from '@/types';
 import { Head } from '@inertiajs/react';
 import axios from 'axios';
+import { useEffect, useState } from 'react';
 
 const breadcrumbs: BreadcrumbItem[] = [
     {
@@ -11,31 +12,24 @@ const breadcrumbs: BreadcrumbItem[] = [
     },
 ];
 
-// Vai vim da API esses valores, nao só eles mas aparentemente todos as outras informacoes vao vim juntas
-var allRooms: any[] = [];
-
-axios.get('/all-rooms')
-    .then(response => {
-        // console.log("Server response: ", response.data);
-        var rooms = response.data;
-        for (let i = 0; i < rooms.length; i++) {
-            allRooms.push("Quarto " + rooms[i].room_number);
-        }
-    }) 
-    .catch(error => {
-        console.error("Erro ao pedir os dados: ", error);
-    }
-);
-
-
-
-const rooms = ["Quarto 101", "Quarto 102", "Quarto 103", "Quarto 104", "Quarto 105", "Quarto 106", ];
-
-
 //! As requisicoes estão funcionando!
 //TODO: falta a validacao se pode ou nao alugar na data que o usuário quer
 
 export default function Dashboard() {
+    const [rooms, setRooms] = useState<string[]>([]);
+
+    useEffect(() => {
+        axios.get<Room[]>('/all-rooms')
+        .then(response => {
+            // Mapeia os dados retornados da API para o formato desejado
+            const allRooms = response.data.map(room => `Quarto ${room.room_number}`);
+            setRooms(allRooms);
+        })
+        .catch(error => {
+            console.error("Erro ao pedir os dados: ", error);
+        });
+    }, []);
+
     const handleButtonClick = (room: string) => {
 
         // Pode existir maneira melhor de pegar esses valores, pode ser por 
@@ -46,16 +40,17 @@ export default function Dashboard() {
         let checkInDate = window.prompt("Data do check-IN: ");
         let checkoOutDate = window.prompt("Data do check-OUT: ");
 
-        console.log({name: "julio", 
-                    check_in_date: "2025-03-28", 
-                    check_out_date: "2025-03-30", 
+
+        console.log({name: roomName, 
+                    check_in_date: checkInDate, 
+                    check_out_date: checkoOutDate, 
                     room_number: Number(room.replace(/\D/g, ''))
                 });
 
         axios.post("/book-a-room", {
-            name: "julio", 
-            check_in_date: "2025-03-28", 
-            check_out_date: "2025-03-30", 
+            name: roomName, 
+            check_in_date: checkInDate, 
+            check_out_date: checkoOutDate, 
             room_number: Number(room.replace(/\D/g, '')),
         })
         .then(response => console.log("Hellooouuu! ",response.data))
