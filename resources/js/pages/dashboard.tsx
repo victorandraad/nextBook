@@ -32,12 +32,34 @@ axios.get('/all-rooms')
 const rooms = ["Quarto 101", "Quarto 102", "Quarto 103", "Quarto 104", "Quarto 105", "Quarto 106", ];
 
 
+//! As requisicoes estão funcionando!
+//TODO: falta a validacao se pode ou nao alugar na data que o usuário quer
+
 export default function Dashboard() {
     const handleButtonClick = (room: string) => {
+
+        // Pode existir maneira melhor de pegar esses valores, pode ser por 
+        // formulário, até facilita para voces tratarem 
+        // os inputs, mas essa foi a solucao que encontrei, lembrando que é uma solucao provisória.
+
         let roomName = window.prompt("Digite o nome de quem alugou o quarto: ");
-        console.log(`Botão do quarto ${room} reservado para ${roomName}!`);
-        console.log(rooms);
-        console.log(allRooms);
+        let checkInDate = window.prompt("Data do check-IN: ");
+        let checkoOutDate = window.prompt("Data do check-OUT: ");
+
+        console.log({name: "julio", 
+                    check_in_date: "2025-03-28", 
+                    check_out_date: "2025-03-30", 
+                    room_number: Number(room.replace(/\D/g, ''))
+                });
+
+        axios.post("/book-a-room", {
+            name: "julio", 
+            check_in_date: "2025-03-28", 
+            check_out_date: "2025-03-30", 
+            room_number: Number(room.replace(/\D/g, '')),
+        })
+        .then(response => console.log("Hellooouuu! ",response.data))
+        .catch(error => console.log("Erro dos grandes aqui bixo! ", error.response.data));
         
         // Aqui você pode adicionar a lógica para enviar a requisição ao backend
     };

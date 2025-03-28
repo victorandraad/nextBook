@@ -15,10 +15,10 @@ return new class extends Migration
             $table->id();
             $table->string("name");
 
-            $table->dateTime("check_in_date");
-            $table->dateTime("check_out_date");
+            $table->date("check_in_date");
+            $table->date("check_out_date");
 
-            $table->integer("room_number");
+            $table->integer("room_number")->unsigned();
             $table->foreign("room_number")->references("room_number")->on("rooms")->onDelete("cascade");
 
             $table->timestamps();
