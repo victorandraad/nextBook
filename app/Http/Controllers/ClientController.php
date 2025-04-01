@@ -12,6 +12,9 @@ class ClientController extends Controller
     public function store(Request $request)
     {
 
+        // deixar a validacao por assim mesmo, se o front vier a ter problemas para validar a mensagem
+        // de erro, trocar por $request->input(); assim eu consigo validar separadamente e mostrar um erro 
+        // diferente para cada excecao.
         $validateData = $request->validate([
             'name' => 'required|string|max:255', 
             'check_in_date' => 'required|date|date_format:Y-m-d', 
@@ -26,10 +29,15 @@ class ClientController extends Controller
             "room_number.exists" => "invalid room number",
         ]);
 
-        function isValidDate($date, $format = 'Y-m-d') {
-            $d = \DateTime::createFromFormat($format, $date);
-            return $d && $d->format($format) === $date;
-        }
+        //! Ainda não é necessária, mas pode vir a ser no futuro
+        // function isValidDate($date, $format = 'Y-m-d') {
+        //     $d = \DateTime::createFromFormat($format, $date);
+        //     return $d && $d->format($format) === $date;
+        // }
+
+        // if (! isValidDate($validateData["check_out_date"]) || ! isValidDate($validateData["check_out_date"])) {
+        //     return response()->json(["invalid date"], 403);
+        // }
 
         $clientsBooks = Clients::select("check_in_date", "check_out_date")->where("room_number", $validateData["room_number"])->get();
         
