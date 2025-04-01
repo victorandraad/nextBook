@@ -4,6 +4,7 @@ import { type BreadcrumbItem } from '@/types';
 import { Head } from '@inertiajs/react';
 import axios from 'axios';
 import { useEffect, useState } from 'react';
+import { PopUp } from '@/components/pop-up';
 
 const breadcrumbs: BreadcrumbItem[] = [
     {
@@ -31,15 +32,9 @@ export default function Dashboard() {
     }, []);
 
     const handleButtonClick = (room: string) => {
-
-        // Pode existir maneira melhor de pegar esses valores, pode ser por 
-        // formulário, até facilita para voces tratarem 
-        // os inputs, mas essa foi a solucao que encontrei, lembrando que é uma solucao provisória.
-
-        let roomName = window.prompt("Digite o nome de quem alugou o quarto: ");
-        let checkInDate = window.prompt("Data do check-IN: ");
-        let checkoOutDate = window.prompt("Data do check-OUT: ");
-
+        const roomName = room;
+        const checkInDate = "2025-01-01"; // Aqui você pode pegar a data de check-in do usuário
+        const checkoOutDate = "2025-01-05"; // Aqui você pode pegar a data de check-out do usuário
 
         console.log({name: roomName, 
                     check_in_date: checkInDate, 
@@ -74,7 +69,7 @@ export default function Dashboard() {
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
             <Head title="Dashboard" />
-            <div className="flex h-full flex-1 flex-col gap-4 rounded-xl p-4">
+            <div className="flex h-screen flex-1 flex-col gap-4 rounded-xl p-4">
                 {/* <div className="grid auto-rows-min gap-4 md:grid-cols-3">
                     <div className="border-sidebar-border/70 dark:border-sidebar-border relative aspect-video overflow-hidden rounded-xl border">
                         <PlaceholderPattern className="absolute inset-0 size-full stroke-neutral-900/20 dark:stroke-neutral-100/20" />
@@ -89,29 +84,23 @@ export default function Dashboard() {
                     </div>
                 </div> */}
 
-                <div className="border-sidebar-border/70 dark:border-sidebar-border relative min-h-[100vh] flex-1 overflow-hidden rounded-xl border md:min-h-min">
+                <div className="border-sidebar-border/70 bg-zinc-900 dark:border-sidebar-border relative min-h-[100vh] flex-1 overflow-hidden rounded-xl border md:min-h-min">
                     <PlaceholderPattern className="absolute inset-0 size-full stroke-neutral-900/20 dark:stroke-neutral-100/20" />
-
-                    <div className="border-sidebar-border/70 dark:border-sidebar-border relative aspect-video overflow-hidden rounded-xl border flex items-center justify-center">
-
-                        { 
-                        rooms.map((room, index) => (
-                            <>
-                                <PlaceholderPattern  className="absolute inset-0 size-full stroke-neutral-900/20 dark:stroke-neutral-100/20" />
-                                <button 
-                                    key={index}
-                                    onClick={() => handleButtonClick(room)} 
-                                    className="relative z-10 px-4 py-2 text-white bg-blue-500 rounded-lg hover:bg-blue-600">
-                                    {room}
-                                </button>
-                            </>
-                        )) }
-
-                                <button 
-                                    onClick={() => handleDelete()} 
-                                    className="relative z-10 px-4 py-2 text-white bg-blue-500 rounded-lg hover:bg-blue-600">
-                                </button>
-                    </div>
+                   
+                        <div className="border-sidebar-border/70 dark:border-sidebar-border relative aspect-video overflow-hidden rounded-xl border flex flex-col p-4 items-center gap-6">
+                            <div className='flex gap-4'>
+                                { 
+                                rooms.map((room, index) => (
+                                    <>
+                                        <PopUp 
+                                            key={index}
+                                            triggerText={room}
+                                        />
+                                    </>
+                                )) }
+                            </div>
+                        </div>
+                    
 
                 </div>
             </div>
