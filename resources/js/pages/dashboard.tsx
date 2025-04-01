@@ -59,6 +59,18 @@ export default function Dashboard() {
         // Aqui você pode adicionar a lógica para enviar a requisição ao backend
     };
 
+
+    //! Valores esteticos, valores precisam ser dinamicos de acordo com oque clicar no front
+
+    const handleDelete = () => {
+        console.log("Oi");
+        axios.post('/delete-book', {
+            check_in_date: "2025-01-01",
+            check_out_date: "2025-01-05",
+            room_number: 103
+        })
+    }
+
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
             <Head title="Dashboard" />
@@ -94,6 +106,11 @@ export default function Dashboard() {
                                 </button>
                             </>
                         )) }
+
+                                <button 
+                                    onClick={() => handleDelete()} 
+                                    className="relative z-10 px-4 py-2 text-white bg-blue-500 rounded-lg hover:bg-blue-600">
+                                </button>
                     </div>
 
                 </div>
