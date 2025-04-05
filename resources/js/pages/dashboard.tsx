@@ -5,6 +5,7 @@ import { Head } from '@inertiajs/react';
 import axios from 'axios';
 import { useEffect, useState } from 'react';
 import { PopUp } from '@/components/pop-up';
+import { CheckTable } from '@/components/checkTable';
 
 const breadcrumbs: BreadcrumbItem[] = [
     {
@@ -13,6 +14,10 @@ const breadcrumbs: BreadcrumbItem[] = [
     },
 ];
 
+type Room = {
+    room_number: number;
+    // Add other properties of Room if needed
+};
 //! As requisicoes estão funcionando!
 //TODO: falta a validacao se pode ou nao alugar na data que o usuário quer
 
@@ -57,13 +62,16 @@ export default function Dashboard() {
 
     //! Valores esteticos, valores precisam ser dinamicos de acordo com oque clicar no front
 
-    const handleDelete = () => {
-        console.log("Oi");
-        axios.post('/delete-book', {
-            check_in_date: "2025-01-01",
-            check_out_date: "2025-01-05",
-            room_number: 103
-        })
+    const handleDelete = (check_in_date: Date[], check_out_date: Date[]) => (room_number: String) =>{
+        console.log('teste', check_in_date, check_out_date, room_number);
+        check_in_date.forEach((inDate, index) => {
+            const outDate = check_out_date[index];
+            axios.post('/delete-book', {
+                check_in_date: inDate,
+                check_out_date: outDate,
+                room_number
+            });
+        });
     }
 
     return (
@@ -95,6 +103,13 @@ export default function Dashboard() {
                                         <PopUp 
                                             key={index}
                                             triggerText={room}
+                                            children={<CheckTable //adicionar os dados dinamicos
+                                                del={(check_in_date, check_out_date) => handleDelete(check_in_date, check_out_date) (room)}
+                                                id="1"
+                                                nome="anailsom"
+                                                prazo_f={new Date()}
+                                                Prazo_i={new Date()}
+                                                />}
                                         />
                                     </>
                                 )) }

@@ -1,25 +1,28 @@
-import { Dialog, DialogClose, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
+import { Dialog, DialogClose, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger, DialogFooter } from '@/components/ui/dialog';
 
 interface PopUpProps {
-    triggerText: string;
+    triggerText?: string;
+    caseStyle?: string;
+    children: React.ReactNode;
+    contentStyle?: string;
 }
 
 export function PopUp(props: PopUpProps): React.ReactElement {
     return (
-        <Dialog className="w-full max-w-md">
-            <DialogTrigger className="w-20 cursor-pointer rounded-md bg-gray-500">{props.triggerText}</DialogTrigger>
-            <DialogContent>
+        <Dialog>
+            <DialogTrigger className={`cursor-pointer rounded-b-md ${props.caseStyle}`}>{props.triggerText}</DialogTrigger>
+            <DialogContent className="sm:max-w-[950px] sm:h-[780px]">
                 <DialogHeader>
                     <DialogTitle>{props.triggerText}</DialogTitle>
-                    <DialogDescription>
-                        blah blah blah conteudo
-                    </DialogDescription>
+                    <div>
+                        {props.children}
+                    </div>
                 </DialogHeader>
-                <div className="mt-4 flex justify-between">
+                <DialogFooter>
                     <DialogClose asChild>
-                        <button className="btn cursor-pointer">fechar</button>
+                        <button className="btn cursor-pointer fixed bottom-6 right-6">fechar</button>
                     </DialogClose>
-                </div>
+                </DialogFooter>
             </DialogContent>
         </Dialog>
     );
