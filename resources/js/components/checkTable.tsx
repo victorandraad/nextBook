@@ -48,34 +48,128 @@ export function CheckTable(props: reservations & delInterface): React.ReactEleme
     const [boxSelect_i, setBoxSelect_i] = React.useState<Date[]>([]);
     const [boxSelect_f, setBoxSelect_f] = React.useState<Date[]>([]);
 
+
     const data: reservations[] = [
+        // {
+        //     id: props.id,
+        //     Prazo_i: props.Prazo_i,
+        //     prazo_f: props.prazo_f,
+        //     nome: props.nome,
+        // } original
         {
-            id: props.id,
-            Prazo_i: props.Prazo_i,
-            prazo_f: props.prazo_f,
-            nome: props.nome,
+            id: '1',
+            Prazo_i: new Date('2025-04-01'),
+            prazo_f: new Date('2025-04-10'),
+            nome: 'joao',
+        },
+        {
+            id: '2',
+            Prazo_i: new Date('2025-11-05'),
+            prazo_f: new Date('2025-11-15'),
+            nome: 'maria',
+        },
+        {
+            id: '3',
+            Prazo_i: new Date('2025-04-03'),
+            prazo_f: new Date('2025-04-18'),
+            nome: 'carlos',
+        },
+        {
+            id: '4',
+            Prazo_i: new Date('2025-12-12'),
+            prazo_f: new Date('2025-12-22'),
+            nome: 'ana',
+        },
+        {
+            id: '5',
+            Prazo_i: new Date('2025-10-20'),
+            prazo_f: new Date('2025-10-30'),
+            nome: 'fernando',
+        },
+        {
+            id: '6',
+            Prazo_i: new Date('2025-11-02'),
+            prazo_f: new Date('2025-11-12'),
+            nome: 'lucas',
+        },
+        {
+            id: '7',
+            Prazo_i: new Date('2025-10-06'),
+            prazo_f: new Date('2025-10-16'),
+            nome: 'beatriz',
+        },
+        {
+            id: '8',
+            Prazo_i: new Date('2025-12-09'),
+            prazo_f: new Date('2025-12-19'),
+            nome: 'gabriel',
+        },
+        {
+            id: '9',
+            Prazo_i: new Date('2025-09-13'),
+            prazo_f: new Date('2025-09-23'),
+            nome: 'juliana',
+        },
+        {
+            id: '10',
+            Prazo_i: new Date('2025-11-21'),
+            prazo_f: new Date('2025-11-30'),
+            nome: 'roberto',
+        },
+        {
+            id: '11',
+            Prazo_i: new Date('2025-10-03'),
+            prazo_f: new Date('2025-10-13'),
+            nome: 'paula',
+        },
+        {
+            id: '12',
+            Prazo_i: new Date('2025-12-07'),
+            prazo_f: new Date('2025-12-17'),
+            nome: 'ricardo',
+        },
+        {
+            id: '13',
+            Prazo_i: new Date('2025-11-10'),
+            prazo_f: new Date('2025-11-20'),
+            nome: 'mariana',
+        },
+        {
+            id: '14',
+            Prazo_i: new Date('2025-09-14'),
+            prazo_f: new Date('2025-09-24'),
+            nome: 'eduardo',
+        },
+        {
+            id: '15',
+            Prazo_i: new Date('2025-12-22'),
+            prazo_f: new Date('2026-01-01'),
+            nome: 'sofia',
         },
     ];
 
     const columns: ColumnDef<reservations>[] = [
         {
             id: 'select',
-            header: ({ table }) => (
-                <input
-                    type="checkbox"
-                    checked={table.getIsAllPageRowsSelected() || table.getIsSomePageRowsSelected()}
-                    onChange={(event) => {
-                        const value = event.target.checked;
-                        table.toggleAllPageRowsSelected(value);
+            header: ({ table }) => {
+                const mode = table.getIsSomePageRowsSelected();
+                return (
+                    <input
+                        type="checkbox"
+                        checked={table.getIsAllPageRowsSelected()}
+                        onChange={(event) => {
+                            const value = event.target.checked;
+                            table.toggleAllPageRowsSelected(value);
 
-                        const selectedRows = value ? table.getRowModel().rows.map((row) => row.original) : [];
-                        setBoxSelect_i(selectedRows.map((row) => row.Prazo_i));
-                        setBoxSelect_f(selectedRows.map((row) => row.prazo_f));
-                    }}
-                    aria-label="Select all"
-                    className="peer border-input bg-background checked:bg-primary checked:border-primary checked:text-primary-foreground focus-visible:ring-ring/50 focus-visible:border-ring aria-[invalid=true]:border-destructive aria-[invalid=true]:ring-destructive/20 dark:aria-[invalid=true]:ring-destructive/40 relative size-4 shrink-0 cursor-pointer appearance-none rounded-[4px] border shadow-xs transition-shadow outline-none after:absolute after:top-1/2 after:left-1/2 after:h-2 after:w-2 after:-translate-x-1/2 after:-translate-y-1/2 after:scale-0 after:rotate-[-45deg] after:border-b-2 after:border-l-2 after:border-white after:transition-transform after:duration-150 after:ease-in-out after:content-[''] checked:after:scale-100 focus-visible:ring-[3px] disabled:cursor-not-allowed disabled:opacity-50"
-                />
-            ),
+                            const selectedRows = value ? table.getRowModel().rows.map((row) => row.original) : [];
+                            setBoxSelect_i(selectedRows.map((row) => row.Prazo_i));
+                            setBoxSelect_f(selectedRows.map((row) => row.prazo_f));
+                        }}
+                        aria-label="Select all"
+                        className={`peer border-input bg-background ${mode ? 'checked:bg-transparent' : 'checked:bg-primary'} checked:border-primary checked:text-primary-foreground focus-visible:ring-ring/50 focus-visible:border-ring aria-[invalid=true]:border-destructive aria-[invalid=true]:ring-destructive/20 dark:aria-[invalid=true]:ring-destructive/40 relative size-4 shrink-0 cursor-pointer appearance-none rounded-[4px] border shadow-xs transition-shadow outline-none after:absolute after:top-1/2 after:left-1/2 after:h-2 after:w-2 after:-translate-x-1/2 after:-translate-y-1/2 after:scale-0 after:rotate-[-45deg] after:border-b-2 after:border-l-2 ${mode ? 'border-white' : 'after:border-black'} after:transition-transform after:duration-150 after:ease-in-out after:content-[''] checked:after:scale-100 focus-visible:ring-[3px] disabled:cursor-not-allowed disabled:opacity-50`}
+                    />
+                );
+            },
             cell: ({ row }) => (
                 <input
                     type="checkbox"
@@ -99,7 +193,7 @@ export function CheckTable(props: reservations & delInterface): React.ReactEleme
                         });
                     }}
                     aria-label="Select row"
-                    className="peer border-input bg-background checked:bg-primary checked:border-primary checked:text-primary-foreground focus-visible:ring-ring/50 focus-visible:border-ring aria-[invalid=true]:border-destructive aria-[invalid=true]:ring-destructive/20 dark:aria-[invalid=true]:ring-destructive/40 relative size-4 shrink-0 cursor-pointer appearance-none rounded-[4px] border shadow-xs transition-shadow outline-none after:absolute after:top-1/2 after:left-1/2 after:h-2 after:w-2 after:-translate-x-1/2 after:-translate-y-1/2 after:scale-0 after:rotate-[-45deg] after:border-b-2 after:border-l-2 after:border-white after:transition-transform after:duration-150 after:ease-in-out after:content-[''] checked:after:scale-100 focus-visible:ring-[3px] disabled:cursor-not-allowed disabled:opacity-50"
+                    className="peer border-input bg-background checked:bg-primary checked:border-primary checked:text-primary-foreground focus-visible:ring-ring/50 focus-visible:border-ring aria-[invalid=true]:border-destructive aria-[invalid=true]:ring-destructive/20 dark:aria-[invalid=true]:ring-destructive/40 relative size-4 shrink-0 cursor-pointer appearance-none rounded-[4px] border shadow-xs transition-shadow outline-none after:absolute after:top-1/2 after:left-1/2 after:h-2 after:w-2 after:-translate-x-1/2 after:-translate-y-1/2 after:scale-0 after:rotate-[-45deg] after:border-b-2 after:border-l-2 after:border-black after:transition-transform after:duration-150 after:ease-in-out after:content-[''] checked:after:scale-100 focus-visible:ring-[3px] disabled:cursor-not-allowed disabled:opacity-50"
                 />
             ),
             enableSorting: false,
@@ -109,14 +203,14 @@ export function CheckTable(props: reservations & delInterface): React.ReactEleme
             accessorKey: 'estado',
             header: 'estado',
             cell: ({ row }) => {
-                const estado = row.original.Prazo_i <= new Date() ? 'utilizando' : 'reservado';
+                const estado = row.original.Prazo_i <= new Date() && new Date() <= row.original.prazo_f ? 'utilizando' : 'reservado';
                 return <div className="capitalize">{estado}</div>;
             },
         },
         {
             accessorKey: 'nome',
             header: ({ column }) => (
-                <Button variant="ghost" className='cursor-pointer' onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}>
+                <Button variant="ghost" className="cursor-pointer" onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}>
                     nome
                     <ArrowUpDown />
                 </Button>
@@ -225,7 +319,7 @@ export function CheckTable(props: reservations & delInterface): React.ReactEleme
             </div>
             <div className="flex w-full items-center justify-between py-4">
                 <div className="text-muted-foreground flex text-sm">
-                    {table.getFilteredSelectedRowModel().rows.length} of {table.getFilteredRowModel().rows.length} linha(s) selecionadas.
+                    {table.getFilteredSelectedRowModel().rows.length} de {table.getFilteredRowModel().rows.length} linha(s) selecionadas.
                 </div>
                 <div>
                     <Pagination>
@@ -273,9 +367,7 @@ export function CheckTable(props: reservations & delInterface): React.ReactEleme
                         size="sm"
                         className="cursor-pointer"
                         onClick={() => {
-                            const check_in_dates = Array.from(boxSelect_i).map((t) => new Date(t));
-                            const check_out_dates = Array.from(boxSelect_f).map((t) => new Date(t));
-                            props.del(check_in_dates, check_out_dates);
+                            props.del(boxSelect_i, boxSelect_f);
                         }}
                     >
                         Deletar
