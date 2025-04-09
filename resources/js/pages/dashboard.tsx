@@ -99,19 +99,17 @@ export default function Dashboard() {
                             <div className='flex gap-4'>
                                 { 
                                 rooms.map((room, index) => (
-                                    <>
-                                        <PopUp 
-                                            key={index}
-                                            triggerText={room}
-                                            children={<CheckTable //adicionar os dados dinamicos
-                                                del={(check_in_date, check_out_date) => handleDelete(check_in_date, check_out_date) (room)}
-                                                id="1"
-                                                nome="anailsom"
-                                                prazo_f={new Date()}
-                                                Prazo_i={new Date()}
-                                                />}
-                                        />
-                                    </>
+                                    <PopUp 
+                                        key={index}
+                                        triggerText={room}
+                                        children={<CheckTable //adicionar os dados dinamicos
+                                            del={(check_in_date, check_out_date) => handleDelete(check_in_date, check_out_date) (room)}
+                                            id="1"
+                                            nome="anailsom"
+                                            prazo_f={new Date()}
+                                            Prazo_i={new Date()}
+                                            />}
+                                    />
                                 )) }
                             </div>
                         </div>

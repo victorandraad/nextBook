@@ -159,11 +159,25 @@ export function CheckTable(props: reservations & delInterface): React.ReactEleme
                         checked={table.getIsAllPageRowsSelected()}
                         onChange={(event) => {
                             const value = event.target.checked;
-                            table.toggleAllPageRowsSelected(value);
-
-                            const selectedRows = value ? table.getRowModel().rows.map((row) => row.original) : [];
-                            setBoxSelect_i(selectedRows.map((row) => row.Prazo_i));
-                            setBoxSelect_f(selectedRows.map((row) => row.prazo_f));
+                            const currentPageRows = table.getRowModel().rows;
+                            
+                            // Toggle selection for current page rows
+                            currentPageRows.forEach(row => row.toggleSelected(value));
+                            
+                            // Update the date arrays
+                            if (value) {
+                                // Add new dates to existing selections
+                                setBoxSelect_i(prev => [...prev, ...currentPageRows.map(row => row.original.Prazo_i)]);
+                                setBoxSelect_f(prev => [...prev, ...currentPageRows.map(row => row.original.prazo_f)]);
+                            } else {
+                                // Remove dates of current page from selections
+                                setBoxSelect_i(prev => prev.filter(d => 
+                                    !currentPageRows.some(row => row.original.Prazo_i.getTime() === d.getTime())
+                                ));
+                                setBoxSelect_f(prev => prev.filter(d => 
+                                    !currentPageRows.some(row => row.original.prazo_f.getTime() === d.getTime())
+                                ));
+                            }
                         }}
                         aria-label="Select all"
                         className={`peer border-input bg-background ${mode ? 'checked:bg-transparent' : 'checked:bg-primary'} checked:border-primary checked:text-primary-foreground focus-visible:ring-ring/50 focus-visible:border-ring aria-[invalid=true]:border-destructive aria-[invalid=true]:ring-destructive/20 dark:aria-[invalid=true]:ring-destructive/40 relative size-4 shrink-0 cursor-pointer appearance-none rounded-[4px] border shadow-xs transition-shadow outline-none after:absolute after:top-1/2 after:left-1/2 after:h-2 after:w-2 after:-translate-x-1/2 after:-translate-y-1/2 after:scale-0 after:rotate-[-45deg] after:border-b-2 after:border-l-2 ${mode ? 'border-white' : 'after:border-black'} after:transition-transform after:duration-150 after:ease-in-out after:content-[''] checked:after:scale-100 focus-visible:ring-[3px] disabled:cursor-not-allowed disabled:opacity-50`}
@@ -325,7 +339,10 @@ export function CheckTable(props: reservations & delInterface): React.ReactEleme
                     <Pagination>
                         <PaginationContent>
                             <PaginationItem>
-                                <PaginationPrevious onClick={() => setPages((prev) => Math.max(prev - 1, 0))} className="cursor-pointer" />
+                                <PaginationPrevious 
+                                    onClick={() => setPages(prev => Math.max(prev - 1, 0))} 
+                                    className="cursor-pointer" 
+                                />
                             </PaginationItem>
                             {Array.from({ length: Math.min(5, Math.ceil(data.length / 10)) }, (_, index) => {
                                 const startPage = Math.floor(pages / 5) * 5;
@@ -351,7 +368,7 @@ export function CheckTable(props: reservations & delInterface): React.ReactEleme
                             ) : null}
                             <PaginationItem>
                                 <PaginationNext
-                                    onClick={() => setPages((prev) => Math.min(prev + 1, Math.ceil(data.length / 10) - 1))}
+                                    onClick={() => setPages(prev => Math.min(prev + 1, Math.ceil(data.length / 10) - 1))}
                                     className="cursor-pointer"
                                 />
                             </PaginationItem>
