@@ -1,5 +1,7 @@
 <?php
 
+use App\Http\Controllers\RoomController;
+use App\Http\Controllers\ClientController;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
@@ -12,6 +14,12 @@ Route::middleware(['auth', 'verified'])->group(function () {
         return Inertia::render('dashboard');
     })->name('dashboard');
 });
+
+Route::get("/all-rooms", [RoomController::class, 'index']);
+
+Route::post('/book-a-room', [ClientController::class, 'store']);
+
+Route::post('/delete-book', [ClientController::class, 'unbook']);
 
 require __DIR__.'/settings.php';
 require __DIR__.'/auth.php';
