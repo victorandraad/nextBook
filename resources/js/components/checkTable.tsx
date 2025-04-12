@@ -56,8 +56,8 @@ export function CheckTable(props: room_number): React.ReactElement {
     const [boxSelect_i, setBoxSelect_i] = React.useState<Date[]>([]);
     const [boxSelect_f, setBoxSelect_f] = React.useState<Date[]>([]);
     const [data, setData] = useState<[]>([]);
-    
-    const handleDelete = (check_in_date: [], check_out_date: []) =>{
+
+    const handleDelete = (check_in_date: Date[], check_out_date: Date[]) =>{
         console.log('teste', check_in_date, check_out_date, props.room_number);
         check_in_date.forEach((inDate, index) => {
             const outDate = check_out_date[index];
