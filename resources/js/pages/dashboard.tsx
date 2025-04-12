@@ -22,13 +22,13 @@ type Room = {
 //TODO: falta a validacao se pode ou nao alugar na data que o usuário quer
 
 export default function Dashboard() {
-    const [rooms, setRooms] = useState<string[]>([]);
+    const [rooms, setRooms] = useState<number[]>([]);
 
     useEffect(() => {
         axios.get<Room[]>('/all-rooms')
         .then(response => {
             // Mapeia os dados retornados da API para o formato desejado
-            const allRooms = response.data.map(room => `Quarto ${room.room_number}`);
+            const allRooms = response.data.map(room => room.room_number);
             setRooms(allRooms);
         })
         .catch(error => {
@@ -62,18 +62,7 @@ export default function Dashboard() {
 
     //! Valores esteticos, valores precisam ser dinamicos de acordo com oque clicar no front
 
-    const handleDelete = (check_in_date: Date[], check_out_date: Date[]) => (room_number: String) =>{
-        console.log('teste', check_in_date, check_out_date, room_number);
-        check_in_date.forEach((inDate, index) => {
-            const outDate = check_out_date[index];
-            axios.post('/delete-book', {
-                check_in_date: inDate,
-                check_out_date: outDate,
-                room_number
-            });
-        });
-    }
-
+    
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
             <Head title="Dashboard" />
@@ -101,13 +90,9 @@ export default function Dashboard() {
                                 rooms.map((room, index) => (
                                     <PopUp 
                                         key={index}
-                                        triggerText={room}
+                                        triggerText={"Quarto " + room}
                                         children={<CheckTable //adicionar os dados dinamicos
-                                            del={(check_in_date, check_out_date) => handleDelete(check_in_date, check_out_date) (room)}
-                                            id="1"
-                                            nome="anailsom"
-                                            prazo_f={new Date()}
-                                            Prazo_i={new Date()}
+                                            room_number={room}
                                             />}
                                     />
                                 )) }

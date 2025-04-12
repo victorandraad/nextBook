@@ -94,6 +94,18 @@ class ClientController extends Controller
         
     }
 
+    public function getBooks(Request $request){
+
+        $validateData = $request->validate([
+            'room_number' => 'required|integer|exists:rooms,room_number',
+        ]);
+
+        $clientsBooks = Clients::select("check_in_date", "check_out_date", "name", "id")->where("room_number", $validateData["room_number"])->get();
+
+        return response()->json($clientsBooks, 201);
+
+    }
+
     // $clientsBooks = Clients::select("check_in_date", "check_out_date")->where("room_number", $validateData["room_number"])->get();
     
     // $teste = Clients::select("room_number")

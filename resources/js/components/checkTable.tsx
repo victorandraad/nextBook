@@ -28,18 +28,26 @@ import {
     PaginationPrevious,
 } from '@/components/ui/pagination';
 
-interface delInterface {
-    del: (check_in_date: Date[], check_out_date: Date[]) => void;
-}
+import { useEffect, useState } from 'react';
+import axios from 'axios';
+
+// interface delInterface {
+//     del: (check_in_date: Date[], check_out_date: Date[]) => void;
+// }
 
 type reservations = {
     id: string;
-    Prazo_i: Date;
-    prazo_f: Date;
-    nome: string;
+    check_in_date: Date;
+    check_out_date: Date;
+    name: string;
 };
 
-export function CheckTable(props: reservations & delInterface): React.ReactElement {
+type room_number = {
+    room_number: number;
+}
+
+
+export function CheckTable(props: room_number): React.ReactElement {
     const [sorting, setSorting] = React.useState<SortingState>([]);
     const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>([]);
     const [columnVisibility, setColumnVisibility] = React.useState<VisibilityState>({});
@@ -47,106 +55,47 @@ export function CheckTable(props: reservations & delInterface): React.ReactEleme
     const [pages, setPages] = React.useState<number>(0);
     const [boxSelect_i, setBoxSelect_i] = React.useState<Date[]>([]);
     const [boxSelect_f, setBoxSelect_f] = React.useState<Date[]>([]);
+    const [data, setData] = useState<[]>([]);
+    
+    const handleDelete = (check_in_date: [], check_out_date: []) =>{
+        console.log('teste', check_in_date, check_out_date, props.room_number);
+        check_in_date.forEach((inDate, index) => {
+            const outDate = check_out_date[index];
+            axios.post('/delete-book', {
+                check_in_date: inDate,
+                check_out_date: outDate,
+                room_number: props.room_number
+            });
+        });
+    
+    }
 
+    useEffect(() => {
+        axios.post<[]>('/books', {
 
-    const data: reservations[] = [
-        // {
-        //     id: props.id,
-        //     Prazo_i: props.Prazo_i,
-        //     prazo_f: props.prazo_f,
-        //     nome: props.nome,
-        // } original
-        {
-            id: '1',
-            Prazo_i: new Date('2025-04-01'),
-            prazo_f: new Date('2025-04-10'),
-            nome: 'joao',
-        },
-        {
-            id: '2',
-            Prazo_i: new Date('2025-11-05'),
-            prazo_f: new Date('2025-11-15'),
-            nome: 'maria',
-        },
-        {
-            id: '3',
-            Prazo_i: new Date('2025-04-03'),
-            prazo_f: new Date('2025-04-18'),
-            nome: 'carlos',
-        },
-        {
-            id: '4',
-            Prazo_i: new Date('2025-12-12'),
-            prazo_f: new Date('2025-12-22'),
-            nome: 'ana',
-        },
-        {
-            id: '5',
-            Prazo_i: new Date('2025-10-20'),
-            prazo_f: new Date('2025-10-30'),
-            nome: 'fernando',
-        },
-        {
-            id: '6',
-            Prazo_i: new Date('2025-11-02'),
-            prazo_f: new Date('2025-11-12'),
-            nome: 'lucas',
-        },
-        {
-            id: '7',
-            Prazo_i: new Date('2025-10-06'),
-            prazo_f: new Date('2025-10-16'),
-            nome: 'beatriz',
-        },
-        {
-            id: '8',
-            Prazo_i: new Date('2025-12-09'),
-            prazo_f: new Date('2025-12-19'),
-            nome: 'gabriel',
-        },
-        {
-            id: '9',
-            Prazo_i: new Date('2025-09-13'),
-            prazo_f: new Date('2025-09-23'),
-            nome: 'juliana',
-        },
-        {
-            id: '10',
-            Prazo_i: new Date('2025-11-21'),
-            prazo_f: new Date('2025-11-30'),
-            nome: 'roberto',
-        },
-        {
-            id: '11',
-            Prazo_i: new Date('2025-10-03'),
-            prazo_f: new Date('2025-10-13'),
-            nome: 'paula',
-        },
-        {
-            id: '12',
-            Prazo_i: new Date('2025-12-07'),
-            prazo_f: new Date('2025-12-17'),
-            nome: 'ricardo',
-        },
-        {
-            id: '13',
-            Prazo_i: new Date('2025-11-10'),
-            prazo_f: new Date('2025-11-20'),
-            nome: 'mariana',
-        },
-        {
-            id: '14',
-            Prazo_i: new Date('2025-09-14'),
-            prazo_f: new Date('2025-09-24'),
-            nome: 'eduardo',
-        },
-        {
-            id: '15',
-            Prazo_i: new Date('2025-12-22'),
-            prazo_f: new Date('2026-01-01'),
-            nome: 'sofia',
-        },
-    ];
+            room_number: props.room_number
+
+        })
+        .then(response => {
+            // Mapeia os dados retornados da API para o formato desejado
+            // const allRooms = response.data.map(room => room.room_number);
+            setData(response.data);
+            console.log(response.data);
+        })
+        .catch(error => {
+            console.error("Erro ao pedir os dados: ", error);
+        });
+    }, []);
+
+    // const data: reservations[] = [
+    //     {
+    //         id: props.id,
+    //         check_in_date: props.check_in_date,
+    //         check_out_date: props.check_out_date,
+    //         name: props.name,
+    //         room_number: props.room_number,
+    //     }
+    // ];
 
     const columns: ColumnDef<reservations>[] = [
         {
@@ -167,15 +116,15 @@ export function CheckTable(props: reservations & delInterface): React.ReactEleme
                             // Update the date arrays
                             if (value) {
                                 // Add new dates to existing selections
-                                setBoxSelect_i(prev => [...prev, ...currentPageRows.map(row => row.original.Prazo_i)]);
-                                setBoxSelect_f(prev => [...prev, ...currentPageRows.map(row => row.original.prazo_f)]);
+                                setBoxSelect_i(prev => [...prev, ...currentPageRows.map(row => row.original.check_in_date)]);
+                                setBoxSelect_f(prev => [...prev, ...currentPageRows.map(row => row.original.check_out_date)]);
                             } else {
                                 // Remove dates of current page from selections
                                 setBoxSelect_i(prev => prev.filter(d => 
-                                    !currentPageRows.some(row => row.original.Prazo_i.getTime() === d.getTime())
+                                    !currentPageRows.some(row => row.original.check_in_date.getTime() === d.getTime())
                                 ));
                                 setBoxSelect_f(prev => prev.filter(d => 
-                                    !currentPageRows.some(row => row.original.prazo_f.getTime() === d.getTime())
+                                    !currentPageRows.some(row => row.original.check_out_date.getTime() === d.getTime())
                                 ));
                             }
                         }}
@@ -194,15 +143,15 @@ export function CheckTable(props: reservations & delInterface): React.ReactEleme
 
                         setBoxSelect_i((prev) => {
                             const newValues = value
-                                ? [...prev, row.original.Prazo_i]
-                                : prev.filter((d) => d.getTime() !== row.original.Prazo_i.getTime());
+                                ? [...prev, row.original.check_in_date]
+                                : prev.filter((d) => d.getTime() !== row.original.check_in_date.getTime());
                             return newValues;
                         });
 
                         setBoxSelect_f((prev) => {
                             const newValues = value
-                                ? [...prev, row.original.prazo_f]
-                                : prev.filter((d) => d.getTime() !== row.original.prazo_f.getTime());
+                                ? [...prev, row.original.check_out_date]
+                                : prev.filter((d) => d.getTime() !== row.original.check_out_date.getTime());
                             return newValues;
                         });
                     }}
@@ -217,30 +166,30 @@ export function CheckTable(props: reservations & delInterface): React.ReactEleme
             accessorKey: 'estado',
             header: 'estado',
             cell: ({ row }) => {
-                const estado = row.original.Prazo_i <= new Date() && new Date() <= row.original.prazo_f ? 'utilizando' : 'reservado';
+                const estado = row.original.check_in_date <= new Date() && new Date() <= row.original.check_out_date ? 'utilizando' : 'reservado';
                 return <div className="capitalize">{estado}</div>;
             },
         },
         {
-            accessorKey: 'nome',
+            accessorKey: 'name',
             header: ({ column }) => (
                 <Button variant="ghost" className="cursor-pointer" onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}>
-                    nome
+                    name
                     <ArrowUpDown />
                 </Button>
             ),
-            cell: ({ row }) => <div className="lowercase">{row.getValue('nome')}</div>,
+            cell: ({ row }) => <div className="lowercase">{row.getValue('name')}</div>,
         },
         {
-            accessorKey: 'Prazo_i',
+            accessorKey: 'check_in_date',
             header: () => <div className="text-right">Prazo Inicial</div>,
-            cell: ({ row }) => <div className="text-right font-medium">{row.original.Prazo_i.toLocaleDateString()}</div>,
+            cell: ({ row }) => <div className="text-right font-medium">{row.getValue('check_in_date')}</div>,
         },
         {
-            accessorKey: 'prazo_f',
+            accessorKey: 'check_out_date',
             header: () => <div className="text-right">Prazo Final</div>,
-            cell: ({ row }) => <div className="text-right font-medium">{row.original.prazo_f.toLocaleDateString()}</div>,
-        },
+            cell: ({ row }) => <div className="text-right font-medium">{row.getValue('check_out_date')}</div>,
+        }, 
     ];
 
     const table = useReactTable({
@@ -268,8 +217,8 @@ export function CheckTable(props: reservations & delInterface): React.ReactEleme
             <div className="flex items-center py-4">
                 <Input
                     placeholder="filtre por nome..."
-                    value={(table.getColumn('nome')?.getFilterValue() as string) ?? ''}
-                    onChange={(event) => table.getColumn('nome')?.setFilterValue(event.target.value)}
+                    value={(table.getColumn('name')?.getFilterValue() as string) ?? ''}
+                    onChange={(event) => table.getColumn('name')?.setFilterValue(event.target.value)}
                     className="max-w-sm"
                 />
                 <DropdownMenu>
@@ -384,7 +333,8 @@ export function CheckTable(props: reservations & delInterface): React.ReactEleme
                         size="sm"
                         className="cursor-pointer"
                         onClick={() => {
-                            props.del(boxSelect_i, boxSelect_f);
+                            handleDelete(boxSelect_i, boxSelect_f);
+                            console.log(boxSelect_i, boxSelect_f)
                         }}
                     >
                         Deletar
