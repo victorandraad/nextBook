@@ -14,6 +14,9 @@ export function PopUp(props: PopUpProps): React.ReactElement {
             <DialogContent className="sm:max-w-[950px] sm:h-[780px]">
                 <DialogHeader>
                     <DialogTitle>{props.triggerText}</DialogTitle>
+                    <DialogDescription>
+                        {props.triggerText} details and information
+                    </DialogDescription>
                     <div>
                         {props.children}
                     </div>
