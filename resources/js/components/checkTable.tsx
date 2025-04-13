@@ -28,8 +28,8 @@ import {
     PaginationPrevious,
 } from '@/components/ui/pagination';
 
-import { useEffect, useState } from 'react';
 import axios from 'axios';
+import { useEffect, useState } from 'react';
 
 // interface delInterface {
 //     del: (check_in_date: Date[], check_out_date: Date[]) => void;
@@ -44,8 +44,7 @@ type reservations = {
 
 type room_number = {
     room_number: number;
-}
-
+};
 
 export function CheckTable(props: room_number): React.ReactElement {
     const [sorting, setSorting] = React.useState<SortingState>([]);
@@ -57,35 +56,33 @@ export function CheckTable(props: room_number): React.ReactElement {
     const [boxSelect_f, setBoxSelect_f] = React.useState<Date[]>([]);
     const [data, setData] = useState<[]>([]);
 
-    const handleDelete = (check_in_date: Date[], check_out_date: Date[]) =>{
+    const handleDelete = (check_in_date: Date[], check_out_date: Date[]) => {
         console.log('teste', check_in_date, check_out_date, props.room_number);
         check_in_date.forEach((inDate, index) => {
             const outDate = check_out_date[index];
             axios.post('/delete-book', {
                 check_in_date: inDate,
                 check_out_date: outDate,
-                room_number: props.room_number
+                room_number: props.room_number,
             });
         });
-    
-    }
+    };
 
     useEffect(() => {
-        axios.post<[]>('/books', {
-
-            room_number: props.room_number
-
-        })
-        .then(response => {
-            // Mapeia os dados retornados da API para o formato desejado
-            // const allRooms = response.data.map(room => room.room_number);
-            setData(response.data);
-            console.log(response.data);
-        })
-        .catch(error => {
-            console.error("Erro ao pedir os dados: ", error);
-        });
-    }, []);
+        axios
+            .post<[]>('/books', {
+                room_number: props.room_number,
+            })
+            .then((response) => {
+                // Mapeia os dados retornados da API para o formato desejado
+                // const allRooms = response.data.map(room => room.room_number);
+                setData(response.data);
+                console.log(response.data);
+            })
+            .catch((error) => {
+                console.error('Erro ao pedir os dados: ', error);
+            });
+    }, [props.room_number]);
 
     // const data: reservations[] = [
     //     {
@@ -109,23 +106,23 @@ export function CheckTable(props: room_number): React.ReactElement {
                         onChange={(event) => {
                             const value = event.target.checked;
                             const currentPageRows = table.getRowModel().rows;
-                            
+
                             // Toggle selection for current page rows
-                            currentPageRows.forEach(row => row.toggleSelected(value));
-                            
+                            currentPageRows.forEach((row) => row.toggleSelected(value));
+
                             // Update the date arrays
                             if (value) {
                                 // Add new dates to existing selections
-                                setBoxSelect_i(prev => [...prev, ...currentPageRows.map(row => row.original.check_in_date)]);
-                                setBoxSelect_f(prev => [...prev, ...currentPageRows.map(row => row.original.check_out_date)]);
+                                setBoxSelect_i((prev) => [...prev, ...currentPageRows.map((row) => row.original.check_in_date)]);
+                                setBoxSelect_f((prev) => [...prev, ...currentPageRows.map((row) => row.original.check_out_date)]);
                             } else {
                                 // Remove dates of current page from selections
-                                setBoxSelect_i(prev => prev.filter(d => 
-                                    !currentPageRows.some(row => row.original.check_in_date.getTime() === d.getTime())
-                                ));
-                                setBoxSelect_f(prev => prev.filter(d => 
-                                    !currentPageRows.some(row => row.original.check_out_date.getTime() === d.getTime())
-                                ));
+                                setBoxSelect_i((prev) =>
+                                    prev.filter((d) => !currentPageRows.some((row) => row.original.check_in_date.getTime() === d.getTime())),
+                                );
+                                setBoxSelect_f((prev) =>
+                                    prev.filter((d) => !currentPageRows.some((row) => row.original.check_out_date.getTime() === d.getTime())),
+                                );
                             }
                         }}
                         aria-label="Select all"
@@ -189,7 +186,7 @@ export function CheckTable(props: room_number): React.ReactElement {
             accessorKey: 'check_out_date',
             header: () => <div className="text-right">Prazo Final</div>,
             cell: ({ row }) => <div className="text-right font-medium">{row.getValue('check_out_date')}</div>,
-        }, 
+        },
     ];
 
     const table = useReactTable({
@@ -288,10 +285,7 @@ export function CheckTable(props: room_number): React.ReactElement {
                     <Pagination>
                         <PaginationContent>
                             <PaginationItem>
-                                <PaginationPrevious 
-                                    onClick={() => setPages(prev => Math.max(prev - 1, 0))} 
-                                    className="cursor-pointer" 
-                                />
+                                <PaginationPrevious onClick={() => setPages((prev) => Math.max(prev - 1, 0))} className="cursor-pointer" />
                             </PaginationItem>
                             {Array.from({ length: Math.min(5, Math.ceil(data.length / 10)) }, (_, index) => {
                                 const startPage = Math.floor(pages / 5) * 5;
@@ -317,7 +311,7 @@ export function CheckTable(props: room_number): React.ReactElement {
                             ) : null}
                             <PaginationItem>
                                 <PaginationNext
-                                    onClick={() => setPages(prev => Math.min(prev + 1, Math.ceil(data.length / 10) - 1))}
+                                    onClick={() => setPages((prev) => Math.min(prev + 1, Math.ceil(data.length / 10) - 1))}
                                     className="cursor-pointer"
                                 />
                             </PaginationItem>
@@ -334,7 +328,7 @@ export function CheckTable(props: room_number): React.ReactElement {
                         className="cursor-pointer"
                         onClick={() => {
                             handleDelete(boxSelect_i, boxSelect_f);
-                            console.log(boxSelect_i, boxSelect_f)
+                            console.log(boxSelect_i, boxSelect_f);
                         }}
                     >
                         Deletar
