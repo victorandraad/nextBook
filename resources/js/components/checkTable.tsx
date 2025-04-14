@@ -161,9 +161,9 @@ export function CheckTable(props: room_number): React.ReactElement {
         },
         {
             accessorKey: 'estado',
-            header: 'estado',
+            header: 'Estado',
             cell: ({ row }) => {
-                const estado = row.original.check_in_date <= new Date() && new Date() <= row.original.check_out_date ? 'utilizando' : 'reservado';
+                const estado = row.original.check_in_date <= new Date() && new Date() <= row.original.check_out_date ? 'Em uso' : 'Reservado';
                 return <div className="capitalize">{estado}</div>;
             },
         },
@@ -171,7 +171,7 @@ export function CheckTable(props: room_number): React.ReactElement {
             accessorKey: 'name',
             header: ({ column }) => (
                 <Button variant="ghost" className="cursor-pointer" onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}>
-                    name
+                    Nome
                     <ArrowUpDown />
                 </Button>
             ),
@@ -179,12 +179,12 @@ export function CheckTable(props: room_number): React.ReactElement {
         },
         {
             accessorKey: 'check_in_date',
-            header: () => <div className="text-right">Prazo Inicial</div>,
+            header: () => <div className="text-right">Data de Entrada</div>,
             cell: ({ row }) => <div className="text-right font-medium">{row.getValue('check_in_date')}</div>,
         },
         {
             accessorKey: 'check_out_date',
-            header: () => <div className="text-right">Prazo Final</div>,
+            header: () => <div className="text-right">Data de Saída</div>,
             cell: ({ row }) => <div className="text-right font-medium">{row.getValue('check_out_date')}</div>,
         },
     ];

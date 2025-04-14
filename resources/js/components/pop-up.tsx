@@ -15,7 +15,7 @@ export function PopUp(props: PopUpProps): React.ReactElement {
                 <DialogHeader>
                     <DialogTitle>{props.triggerText}</DialogTitle>
                     <DialogDescription>
-                        {props.triggerText} details and information
+                        Detalhes e informações do {props.triggerText}
                     </DialogDescription>
                     <div>
                         {props.children}
