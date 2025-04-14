@@ -30,6 +30,15 @@ import {
 
 import axios from 'axios';
 import { useEffect, useState } from 'react';
+import {
+    Dialog,
+    DialogContent,
+    DialogHeader,
+    DialogTitle,
+    DialogTrigger,
+} from '@/components/ui/dialog';
+import { CreateReservationForm } from './CreateReservationForm';
+import { useToast } from '@/components/ui/use-toast';
 
 // interface delInterface {
 //     del: (check_in_date: Date[], check_out_date: Date[]) => void;
@@ -55,6 +64,8 @@ export function CheckTable(props: room_number): React.ReactElement {
     const [boxSelect_i, setBoxSelect_i] = React.useState<Date[]>([]);
     const [boxSelect_f, setBoxSelect_f] = React.useState<Date[]>([]);
     const [data, setData] = useState<[]>([]);
+    const [isDialogOpen, setIsDialogOpen] = React.useState(false);
+    const { toast } = useToast();
 
     const handleDelete = (check_in_date: Date[], check_out_date: Date[]) => {
         console.log('teste', check_in_date, check_out_date, props.room_number);
@@ -64,8 +75,51 @@ export function CheckTable(props: room_number): React.ReactElement {
                 check_in_date: inDate,
                 check_out_date: outDate,
                 room_number: props.room_number,
+            }).then(() => {
+                // Refresh the table data after successful deletion
+                axios
+                    .post<[]>('/books', {
+                        room_number: props.room_number,
+                    })
+                    .then((response) => {
+                        setData(response.data);
+                        toast({
+                            title: 'Sucesso!',
+                            description: 'Reserva deletada com sucesso.',
+                        });
+                    })
+                    .catch((error) => {
+                        console.error('Erro ao pedir os dados: ', error);
+                        toast({
+                            title: 'Erro',
+                            description: 'Erro ao atualizar a tabela.',
+                            variant: 'destructive',
+                        });
+                    });
+            }).catch((error) => {
+                console.error('Erro ao deletar reserva: ', error);
+                toast({
+                    title: 'Erro',
+                    description: 'Erro ao deletar reserva.',
+                    variant: 'destructive',
+                });
             });
         });
+    };
+
+    const handleSuccess = () => {
+        setIsDialogOpen(false);
+        // Refresh the table data
+        axios
+            .post<[]>('/books', {
+                room_number: props.room_number,
+            })
+            .then((response) => {
+                setData(response.data);
+            })
+            .catch((error) => {
+                console.error('Erro ao pedir os dados: ', error);
+            });
     };
 
     useEffect(() => {
@@ -319,9 +373,25 @@ export function CheckTable(props: room_number): React.ReactElement {
                     </Pagination>
                 </div>
                 <div className="space-x-2">
-                    <Button variant="ghost" className="cursor-pointer">
-                        criar
-                    </Button>
+                    <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+                        <DialogTrigger asChild>
+                            <Button 
+                                variant="ghost" 
+                                className="cursor-pointer"
+                            >
+                                Criar
+                            </Button>
+                        </DialogTrigger>
+                        <DialogContent className="sm:max-w-[425px]">
+                            <DialogHeader>
+                                <DialogTitle>Criar Nova Reserva</DialogTitle>
+                            </DialogHeader>
+                            <CreateReservationForm 
+                                roomNumber={props.room_number} 
+                                onSuccess={handleSuccess}
+                            />
+                        </DialogContent>
+                    </Dialog>
                     <Button
                         variant="destructive"
                         size="sm"

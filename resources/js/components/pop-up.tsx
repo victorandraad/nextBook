@@ -21,11 +21,6 @@ export function PopUp(props: PopUpProps): React.ReactElement {
                         {props.children}
                     </div>
                 </DialogHeader>
-                <DialogFooter>
-                    <DialogClose asChild>
-                        <button className="btn cursor-pointer fixed bottom-6 right-6">fechar</button>
-                    </DialogClose>
-                </DialogFooter>
             </DialogContent>
         </Dialog>
     );

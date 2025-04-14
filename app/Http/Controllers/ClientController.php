@@ -30,14 +30,14 @@ class ClientController extends Controller
         ]);
 
         //! Ainda não é necessária, mas pode vir a ser no futuro
-        // function isValidDate($date, $format = 'Y-m-d') {
-        //     $d = \DateTime::createFromFormat($format, $date);
-        //     return $d && $d->format($format) === $date;
-        // }
+        function isValidDate($date, $format = 'Y-m-d') {
+            $d = \DateTime::createFromFormat($format, $date);
+            return $d && $d->format($format) === $date;
+        }
 
-        // if (! isValidDate($validateData["check_out_date"]) || ! isValidDate($validateData["check_out_date"])) {
-        //     return response()->json(["invalid date"], 403);
-        // }
+        if (! isValidDate($validateData["check_out_date"]) || ! isValidDate($validateData["check_out_date"])) {
+            return response()->json(["invalid date"], 403);
+        }
 
         $clientsBooks = Clients::select("check_in_date", "check_out_date")->where("room_number", $validateData["room_number"])->get();
         

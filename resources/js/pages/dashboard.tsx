@@ -1,11 +1,11 @@
 import { CheckTable } from '@/components/checkTable';
 import { PopUp } from '@/components/pop-up';
-import { PlaceholderPattern } from '@/components/ui/placeholder-pattern';
 import AppLayout from '@/layouts/app-layout';
 import { type BreadcrumbItem } from '@/types';
 import { Head } from '@inertiajs/react';
 import axios from 'axios';
 import { useEffect, useState } from 'react';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 
 const breadcrumbs: BreadcrumbItem[] = [
     {
@@ -65,39 +65,25 @@ export default function Dashboard() {
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
             <Head title="Painel de Controle" />
-            <div className="flex h-screen flex-1 flex-col gap-4 rounded-xl p-4">
-                {/* <div className="grid auto-rows-min gap-4 md:grid-cols-3">
-                    <div className="border-sidebar-border/70 dark:border-sidebar-border relative aspect-video overflow-hidden rounded-xl border">
-                        <PlaceholderPattern className="absolute inset-0 size-full stroke-neutral-900/20 dark:stroke-neutral-100/20" />
-                    </div>
-
-                    <div className="border-sidebar-border/70 dark:border-sidebar-border relative aspect-video overflow-hidden rounded-xl border">
-                        <PlaceholderPattern className="absolute inset-0 size-full stroke-neutral-900/20 dark:stroke-neutral-100/20" />
-                    </div>
-
-                    <div className="border-sidebar-border/70 dark:border-sidebar-border relative aspect-video overflow-hidden rounded-xl border">
-                        <PlaceholderPattern className="absolute inset-0 size-full stroke-neutral-900/20 dark:stroke-neutral-100/20" />
-                    </div>
-                </div> */}
-
-                <div className="border-sidebar-border/70 dark:border-sidebar-border relative min-h-[100vh] flex-1 overflow-hidden rounded-xl border bg-zinc-900 md:min-h-min">
-                    <PlaceholderPattern className="absolute inset-0 size-full stroke-neutral-900/20 dark:stroke-neutral-100/20" />
-
-                    <div className="border-sidebar-border/70 dark:border-sidebar-border relative flex aspect-video flex-col items-center gap-6 overflow-hidden rounded-xl border p-4">
-                        <div className="flex gap-4">
-                            {rooms.map((room, index) => (
+            <div className="flex h-screen flex-1 flex-col gap-4 p-4">
+                <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+                    {rooms.map((room, index) => (
+                        <Card key={index} className="hover:shadow-lg transition-shadow">
+                            <CardHeader>
+                                <CardTitle className="text-center">Quarto {room}</CardTitle>
+                            </CardHeader>
+                            <CardContent>
                                 <PopUp
-                                    key={index}
-                                    triggerText={'Quarto ' + room}
+                                    triggerText="Ver Reservas"
                                     children={
-                                        <CheckTable //adicionar os dados dinamicos
+                                        <CheckTable
                                             room_number={room}
                                         />
                                     }
                                 />
-                            ))}
-                        </div>
-                    </div>
+                            </CardContent>
+                        </Card>
+                    ))}
                 </div>
             </div>
         </AppLayout>
