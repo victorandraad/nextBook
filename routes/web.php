@@ -16,6 +16,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
     Route::get("/all-rooms", [RoomController::class, 'index']);
 
+    Route::post('/create-room', [RoomController::class, 'store']);
+
     Route::post('/book-a-room', [ClientController::class, 'store']);
 
     Route::post('/delete-book', [ClientController::class, 'unbook']);

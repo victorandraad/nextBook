@@ -6,6 +6,10 @@ import { Head } from '@inertiajs/react';
 import axios from 'axios';
 import { useEffect, useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
+import { CreateRoomForm } from '@/components/CreateRoomForm';
+import { BedDouble, Users, Home } from 'lucide-react';
 
 const breadcrumbs: BreadcrumbItem[] = [
     {
@@ -16,21 +20,37 @@ const breadcrumbs: BreadcrumbItem[] = [
 
 type Room = {
     room_number: number;
-    // Add other properties of Room if needed
+    living_quarters: number;
+    beds: number;
+    balcony: boolean;
+    created_at: string | null;
+    updated_at: string | null;
 };
 //! As requisicoes estão funcionando!
 //TODO: falta a validacao se pode ou nao alugar na data que o usuário quer
 
 export default function Dashboard() {
-    const [rooms, setRooms] = useState<number[]>([]);
+    const [rooms, setRooms] = useState<Room[]>([]);
+    const [isDialogOpen, setIsDialogOpen] = useState(false);
+
+    const handleSuccess = () => {
+        setIsDialogOpen(false);
+        // Refresh the rooms list
+        axios
+            .get<Room[]>('/all-rooms')
+            .then((response) => {
+                setRooms(response.data);
+            })
+            .catch((error) => {
+                console.error('Erro ao pedir os dados: ', error);
+            });
+    };
 
     useEffect(() => {
         axios
             .get<Room[]>('/all-rooms')
             .then((response) => {
-                // Mapeia os dados retornados da API para o formato desejado
-                const allRooms = response.data.map((room) => room.room_number);
-                setRooms(allRooms);
+                setRooms(response.data);
             })
             .catch((error) => {
                 console.error('Erro ao pedir os dados: ', error);
@@ -66,21 +86,61 @@ export default function Dashboard() {
         <AppLayout breadcrumbs={breadcrumbs}>
             <Head title="Painel de Controle" />
             <div className="flex h-screen flex-1 flex-col gap-4 p-4">
+                <div className="flex justify-end">
+                    <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+                        <DialogTrigger asChild>
+                            <Button>Criar Quarto</Button>
+                        </DialogTrigger>
+                        <DialogContent className="sm:max-w-[425px]">
+                            <DialogHeader>
+                                <DialogTitle>Criar Novo Quarto</DialogTitle>
+                            </DialogHeader>
+                            <CreateRoomForm onSuccess={handleSuccess} />
+                        </DialogContent>
+                    </Dialog>
+                </div>
                 <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-                    {rooms.map((room, index) => (
-                        <Card key={index} className="hover:shadow-lg transition-shadow">
+                    {rooms.map((room) => (
+                        <Card key={room.room_number} className="hover:shadow-lg transition-shadow">
                             <CardHeader>
-                                <CardTitle className="text-center">Quarto {room}</CardTitle>
+                                <CardTitle className="text-center">Quarto {room.room_number}</CardTitle>
                             </CardHeader>
-                            <CardContent>
-                                <PopUp
-                                    triggerText="Ver Reservas"
-                                    children={
-                                        <CheckTable
-                                            room_number={room}
-                                        />
-                                    }
-                                />
+                            <CardContent className="space-y-4">
+                                <div className="flex items-center justify-between">
+                                    <div className="flex items-center gap-2">
+                                        <Users className="h-5 w-5 text-muted-foreground" />
+                                        <span className="text-sm text-muted-foreground">
+                                            {room.living_quarters} {room.living_quarters === 1 ? 'pessoa' : 'pessoas'}
+                                        </span>
+                                    </div>
+                                    <div className="flex items-center gap-2">
+                                        <BedDouble className="h-5 w-5 text-muted-foreground" />
+                                        <span className="text-sm text-muted-foreground">
+                                            {room.beds} {room.beds === 1 ? 'cama' : 'camas'}
+                                        </span>
+                                    </div>
+                                </div>
+                                {room.balcony ? (
+                                    <div className="flex items-center gap-2">
+                                        <Home className="h-5 w-5 text-muted-foreground" />
+                                        <span className="text-sm text-muted-foreground">Com varanda</span>
+                                    </div>
+                                ) : (
+                                    <div className="flex items-center gap-2">
+                                        <Home className="h-5 w-5 text-muted-foreground" />
+                                        <span className="text-sm text-muted-foreground">Sem varanda</span>
+                                    </div>
+                                )}
+                                <div className="pt-4">
+                                    <PopUp
+                                        triggerText="Ver Reservas"
+                                        children={
+                                            <CheckTable
+                                                room_number={room.room_number}
+                                            />
+                                        }
+                                    />
+                                </div>
                             </CardContent>
                         </Card>
                     ))}
