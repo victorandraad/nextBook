@@ -134,6 +134,7 @@ export default function Dashboard() {
                                 <div className="pt-4">
                                     <PopUp
                                         triggerText="Ver Reservas"
+                                        roomNumber={room.room_number}
                                         children={
                                             <CheckTable
                                                 room_number={room.room_number}

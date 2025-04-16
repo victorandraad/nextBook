@@ -138,16 +138,6 @@ export function CheckTable(props: room_number): React.ReactElement {
             });
     }, [props.room_number]);
 
-    // const data: reservations[] = [
-    //     {
-    //         id: props.id,
-    //         check_in_date: props.check_in_date,
-    //         check_out_date: props.check_out_date,
-    //         name: props.name,
-    //         room_number: props.room_number,
-    //     }
-    // ];
-
     const columns: ColumnDef<reservations>[] = [
         {
             id: 'select',
@@ -172,10 +162,10 @@ export function CheckTable(props: room_number): React.ReactElement {
                             } else {
                                 // Remove dates of current page from selections
                                 setBoxSelect_i((prev) =>
-                                    prev.filter((d) => !currentPageRows.some((row) => row.original.check_in_date.getTime() === d.getTime())),
+                                    prev.filter((d) => !currentPageRows.some((row) => row.original.check_in_date instanceof Date && row.original.check_in_date.getTime() === d.getTime())),
                                 );
                                 setBoxSelect_f((prev) =>
-                                    prev.filter((d) => !currentPageRows.some((row) => row.original.check_out_date.getTime() === d.getTime())),
+                                    prev.filter((d) => !currentPageRows.some((row) => row.original.check_out_date instanceof Date && row.original.check_out_date.getTime() === d.getTime())),
                                 );
                             }
                         }}
@@ -195,14 +185,14 @@ export function CheckTable(props: room_number): React.ReactElement {
                         setBoxSelect_i((prev) => {
                             const newValues = value
                                 ? [...prev, row.original.check_in_date]
-                                : prev.filter((d) => d.getTime() !== row.original.check_in_date.getTime());
+                                : prev.filter((d) => row.original.check_in_date instanceof Date && d.getTime() !== row.original.check_in_date.getTime());
                             return newValues;
                         });
 
                         setBoxSelect_f((prev) => {
                             const newValues = value
                                 ? [...prev, row.original.check_out_date]
-                                : prev.filter((d) => d.getTime() !== row.original.check_out_date.getTime());
+                                : prev.filter((d) => row.original.check_out_date instanceof Date && d.getTime() !== row.original.check_out_date.getTime());
                             return newValues;
                         });
                     }}
