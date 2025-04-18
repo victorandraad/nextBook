@@ -4,6 +4,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
 import { format } from 'date-fns';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
+import { ErrorAlert } from '@/components/ErrorAlert';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { useToast } from '@/components/ui/use-toast';
@@ -35,6 +36,7 @@ interface CreateReservationFormProps {
 
 export function CreateReservationForm({ roomNumber, onSuccess }: CreateReservationFormProps) {
     const [isLoading, setIsLoading] = useState(false);
+    const [errorMessage, setErrorMessage] = useState<string | null>(null);
     const { toast } = useToast();
 
     const form = useForm<FormValues>({
@@ -66,7 +68,7 @@ export function CreateReservationForm({ roomNumber, onSuccess }: CreateReservati
             form.reset();
             onSuccess?.();
         } catch (error: any) {
-            const errorMessage = error.response?.data?.[0] || 'Erro ao criar reserva';
+            setErrorMessage(error.response?.data?.[0] || 'Erro ao criar reserva');
             toast({
                 title: 'Erro',
                 description: errorMessage,
@@ -134,6 +136,7 @@ export function CreateReservationForm({ roomNumber, onSuccess }: CreateReservati
                     {isLoading ? 'Criando...' : 'Criar Reserva'}
                 </Button>
             </form>
+            {errorMessage && <ErrorAlert message={errorMessage} />}
         </Form>
     );
 } 
