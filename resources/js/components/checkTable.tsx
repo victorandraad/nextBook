@@ -17,6 +17,7 @@ import { Button } from '@/components/ui/button';
 import { DropdownMenu, DropdownMenuCheckboxItem, DropdownMenuContent, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
 import { Input } from '@/components/ui/input';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
+import { Pencil } from 'lucide-react';
 
 import {
     Pagination,
@@ -38,6 +39,7 @@ import {
     DialogTrigger,
 } from '@/components/ui/dialog';
 import { CreateReservationForm } from './CreateReservationForm';
+import { EditReservationForm } from './editReservationsFrom';
 import { useToast } from '@/components/ui/use-toast';
 
 // interface delInterface {
@@ -231,6 +233,38 @@ export function CheckTable(props: room_number): React.ReactElement {
             header: () => <div className="text-right">Data de Saída</div>,
             cell: ({ row }) => <div className="text-right font-medium">{row.getValue('check_out_date')}</div>,
         },
+        {
+            id: "actions",
+            enableHiding: false,
+            cell: ({ row }) => {
+            //   const reservations = row.original
+         
+              return (
+                <Dialog>
+                        <DialogTrigger asChild>
+                            <Button 
+                                variant="ghost" 
+                                className="cursor-pointer"
+                            >
+                                <Pencil />
+                            </Button>
+                        </DialogTrigger>
+                        <DialogContent className="sm:max-w-[425px]">
+                            <DialogHeader>
+                                <DialogTitle>Editar Reserva</DialogTitle>
+                            </DialogHeader>
+                            <EditReservationForm 
+                                roomNumber={props.room_number} 
+                                check_in_date={row.original.check_in_date} 
+                                check_out_date={row.original.check_out_date} 
+                                name={row.original.name}
+                                onSuccess={handleSuccess}
+                            />
+                        </DialogContent>
+                    </Dialog>
+              )
+            },
+          },
     ];
 
     const table = useReactTable({
