@@ -21,11 +21,11 @@ const footerNavItems: NavItem[] = [
 
 export function AppSidebar() {
     return (
-        <Sidebar collapsible="icon" variant="inset">
-            <SidebarHeader>
-                <SidebarMenu>
-                    <SidebarMenuItem>
-                        <SidebarMenuButton size="lg" asChild>
+        <Sidebar className='bg-slate-950' collapsible="icon" variant="inset">
+            <SidebarHeader className='bg-slate-950'>
+                <SidebarMenu >
+                    <SidebarMenuItem >
+                        <SidebarMenuButton  size="lg" asChild>
                             <Link href="/dashboard" prefetch>
                                 <AppLogo />
                             </Link>
@@ -34,11 +34,11 @@ export function AppSidebar() {
                 </SidebarMenu>
             </SidebarHeader>
 
-            <SidebarContent>
+            <SidebarContent className='bg-slate-950'>
                 <NavMain items={mainNavItems} />
             </SidebarContent>
 
-            <SidebarFooter>
+            <SidebarFooter className='bg-slate-950'>
                 <NavFooter items={footerNavItems} className="mt-auto" />
                 <NavUser />
             </SidebarFooter>
