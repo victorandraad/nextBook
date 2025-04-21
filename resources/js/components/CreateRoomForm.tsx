@@ -6,7 +6,7 @@ import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { useToast } from '@/components/ui/use-toast';
-import axios from 'axios';
+import axios, { AxiosError } from 'axios';
 import { Switch } from '@/components/ui/switch';
 
 const formSchema = z.object({
@@ -48,8 +48,8 @@ export function CreateRoomForm({ onSuccess }: CreateRoomFormProps) {
 
             form.reset();
             onSuccess?.();
-        } catch (error: any) {
-            const errorMessage = error.response?.data?.message || 'Erro ao criar quarto';
+        } catch (error: unknown) {
+            const errorMessage = (error as AxiosError<{ message: string }>)?.response?.data?.message || 'Erro ao criar quarto';
             toast({
                 title: 'Erro',
                 description: errorMessage,
