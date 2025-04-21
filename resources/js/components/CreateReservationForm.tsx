@@ -8,7 +8,7 @@ import { ErrorAlert } from '@/components/ErrorAlert';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { useToast } from '@/components/ui/use-toast';
-import axios from 'axios';
+import axios, { AxiosError } from 'axios';
 
 const formSchema = z.object({
     name: z.string().min(2, 'Nome deve ter pelo menos 2 caracteres'),
@@ -67,8 +67,9 @@ export function CreateReservationForm({ roomNumber, onSuccess }: CreateReservati
 
             form.reset();
             onSuccess?.();
-        } catch (error: any) {
-            setErrorMessage(error.response?.data?.[0] || 'Erro ao criar reserva');
+        } catch (error: unknown) {
+            const errorData = (error as AxiosError<{ [key: string]: string[] }>)?.response?.data?.[0];
+            setErrorMessage(typeof errorData === 'string' ? errorData : 'Erro ao criar reserva');
             toast({
                 title: 'Erro',
                 description: errorMessage,

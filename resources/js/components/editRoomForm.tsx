@@ -6,7 +6,7 @@ import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { useToast } from '@/components/ui/use-toast';
-import axios from 'axios';
+import { AxiosError } from 'axios';
 import { Switch } from '@/components/ui/switch';
 
 const formSchema = z.object({
@@ -40,7 +40,7 @@ export function EditRoomForm({ onSuccess, numero_quarto, camas, varanda, pessoas
         },
     });
 
-    async function onSubmit(data: FormValues) {
+    async function onSubmit() {
         setIsLoading(true);
         try {
             // console.log('Dados do formulário:', data);
@@ -52,8 +52,8 @@ export function EditRoomForm({ onSuccess, numero_quarto, camas, varanda, pessoas
             });
 
             onSuccess?.();
-        } catch (error: any) {
-            const errorMessage = error.response?.data?.message || 'Erro ao atualizar quarto';
+        } catch (error: unknown) {
+            const errorMessage = (error as AxiosError<{ message: string }>)?.response?.data?.message || 'Erro ao atualizar quarto';
             toast({
                 title: 'Erro',
                 description: errorMessage,
