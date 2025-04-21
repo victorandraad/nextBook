@@ -3,7 +3,7 @@ import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '
 import { Input } from '@/components/ui/input';
 import { useToast } from '@/components/ui/use-toast';
 import { zodResolver } from '@hookform/resolvers/zod';
-import axios from 'axios';
+import axios, { AxiosError } from 'axios';
 import { format } from 'date-fns';
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
@@ -72,8 +72,8 @@ export function EditReservationForm({ roomNumber, check_in_date, check_out_date,
 
             form.reset();
             onSuccess?.();
-        } catch (error: any) {
-            const errorMessage = error.response?.data?.[0] || 'Erro ao atualizar reserva';
+        } catch (error: unknown) {
+            const errorMessage = (error as AxiosError<{ [key: string]: string[] }>)?.response?.data?.[0] || 'Erro ao atualizar reserva';
             toast({
                 title: 'Erro',
                 description: errorMessage,
