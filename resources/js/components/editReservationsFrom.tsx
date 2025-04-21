@@ -1,51 +1,57 @@
+import { Button } from '@/components/ui/button';
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
+import { Input } from '@/components/ui/input';
+import { useToast } from '@/components/ui/use-toast';
+import { zodResolver } from '@hookform/resolvers/zod';
+import axios from 'axios';
+import { format } from 'date-fns';
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
-import { format } from 'date-fns';
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
-import { ErrorAlert } from '@/components/ErrorAlert';
-import { Input } from '@/components/ui/input';
-import { Button } from '@/components/ui/button';
-import { useToast } from '@/components/ui/use-toast';
-import axios from 'axios';
 
-const formSchema = z.object({
-    name: z.string().min(2, 'Nome deve ter pelo menos 2 caracteres'),
-    check_in_date: z.string().min(1, 'Data de entrada é obrigatória'),
-    check_out_date: z.string().min(1, 'Data de saída é obrigatória'),
-    room_number: z.number(),
-}).refine((data) => {
-    if (data.check_in_date && data.check_out_date) {
-        const checkIn = new Date(data.check_in_date);
-        const checkOut = new Date(data.check_out_date);
-        return checkOut > checkIn;
-    }
-    return true;
-}, {
-    message: "Data de saída deve ser posterior à data de entrada",
-    path: ["check_out_date"],
-});
+const formSchema = z
+    .object({
+        name: z.string().min(2, 'Nome deve ter pelo menos 2 caracteres'),
+        check_in_date: z.string().min(1, 'Data de entrada é obrigatória'),
+        check_out_date: z.string().min(1, 'Data de saída é obrigatória'),
+        room_number: z.number(),
+    })
+    .refine(
+        (data) => {
+            if (data.check_in_date && data.check_out_date) {
+                const checkIn = new Date(data.check_in_date);
+                const checkOut = new Date(data.check_out_date);
+                return checkOut > checkIn;
+            }
+            return true;
+        },
+        {
+            message: 'Data de saída deve ser posterior à data de entrada',
+            path: ['check_out_date'],
+        },
+    );
 
 type FormValues = z.infer<typeof formSchema>;
 
-interface CreateReservationFormProps {
+export interface EditReservationFormProps {
     roomNumber: number;
-    onSuccess?: () => void;
+    check_in_date: Date;
+    check_out_date: Date;
+    name: string;
+    onSuccess: () => void;
 }
 
-export function CreateReservationForm({ roomNumber, onSuccess }: CreateReservationFormProps) {
+export function EditReservationForm({ roomNumber, check_in_date, check_out_date, name, onSuccess }: EditReservationFormProps) {
     const [isLoading, setIsLoading] = useState(false);
-    const [errorMessage, setErrorMessage] = useState<string | null>(null);
     const { toast } = useToast();
 
     const form = useForm<FormValues>({
         resolver: zodResolver(formSchema),
         defaultValues: {
-            name: '',
+            name: name,
             room_number: roomNumber,
-            check_in_date: '',
-            check_out_date: '',
+            check_in_date: check_in_date.toString().split('T')[0],
+            check_out_date: check_out_date.toString().split('T')[0],
         },
     });
 
@@ -54,21 +60,20 @@ export function CreateReservationForm({ roomNumber, onSuccess }: CreateReservati
         try {
             const formattedData = {
                 ...data,
-                check_in_date: data.check_in_date,
-                check_out_date: data.check_out_date,
+                room_number: roomNumber, // Ensure the room number is included
             };
-
-            await axios.post('/book-a-room', formattedData);
+            // console.log('Dados do formulário:', formattedData);
+            await axios.put('/update-reservation', formattedData);
 
             toast({
                 title: 'Sucesso!',
-                description: 'Reserva criada com sucesso.',
+                description: 'Reserva atualizada com sucesso.',
             });
 
             form.reset();
             onSuccess?.();
         } catch (error: any) {
-            setErrorMessage(error.response?.data?.[0] || 'Erro ao criar reserva');
+            const errorMessage = error.response?.data?.[0] || 'Erro ao atualizar reserva';
             toast({
                 title: 'Erro',
                 description: errorMessage,
@@ -87,7 +92,7 @@ export function CreateReservationForm({ roomNumber, onSuccess }: CreateReservati
                     name="name"
                     render={({ field }) => (
                         <FormItem>
-                            <FormLabel>Nome</FormLabel>
+                            <FormLabel>nome</FormLabel>
                             <FormControl>
                                 <Input placeholder="Nome do cliente" {...field} />
                             </FormControl>
@@ -103,11 +108,7 @@ export function CreateReservationForm({ roomNumber, onSuccess }: CreateReservati
                         <FormItem>
                             <FormLabel>Data de Entrada</FormLabel>
                             <FormControl>
-                                <Input 
-                                    type="date" 
-                                    min={format(new Date(), 'yyyy-MM-dd')}
-                                    {...field} 
-                                />
+                                <Input type="date" min={format(new Date(), 'yyyy-MM-dd')} {...field} />
                             </FormControl>
                             <FormMessage />
                         </FormItem>
@@ -121,11 +122,7 @@ export function CreateReservationForm({ roomNumber, onSuccess }: CreateReservati
                         <FormItem>
                             <FormLabel>Data de Saída</FormLabel>
                             <FormControl>
-                                <Input 
-                                    type="date" 
-                                    min={form.watch('check_in_date') || format(new Date(), 'yyyy-MM-dd')}
-                                    {...field} 
-                                />
+                                <Input type="date" min={form.watch('check_in_date') || format(new Date(), 'yyyy-MM-dd')} {...field} />
                             </FormControl>
                             <FormMessage />
                         </FormItem>
@@ -133,10 +130,9 @@ export function CreateReservationForm({ roomNumber, onSuccess }: CreateReservati
                 />
 
                 <Button type="submit" className="w-full" disabled={isLoading}>
-                    {isLoading ? 'Criando...' : 'Criar Reserva'}
+                    {isLoading ? 'Atualizando...' : 'Atualizar Reserva'}
                 </Button>
             </form>
-            {errorMessage && <ErrorAlert message={errorMessage} />}
         </Form>
     );
-} 
+}
