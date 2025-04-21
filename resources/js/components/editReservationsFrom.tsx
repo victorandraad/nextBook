@@ -62,8 +62,8 @@ export function EditReservationForm({ roomNumber, check_in_date, check_out_date,
                 ...data,
                 room_number: roomNumber, // Ensure the room number is included
             };
-
-            // await axios.put('/update-reservation', formattedData);
+            // console.log('Dados do formulário:', formattedData);
+            await axios.put('/update-reservation', formattedData);
 
             toast({
                 title: 'Sucesso!',

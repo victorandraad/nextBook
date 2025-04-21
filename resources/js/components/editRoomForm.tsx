@@ -43,6 +43,7 @@ export function EditRoomForm({ onSuccess, numero_quarto, camas, varanda, pessoas
     async function onSubmit(data: FormValues) {
         setIsLoading(true);
         try {
+            // console.log('Dados do formulário:', data);
             // await axios.put(`/edit-room/${numero_quarto}`, data); // Atualiza o quarto
 
             toast({

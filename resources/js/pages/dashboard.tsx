@@ -58,6 +58,19 @@ export default function Dashboard() {
             });
     }, []);
 
+    const handleDeleteRoom = (roomNumber: number) => {
+        axios
+            .delete(`/delete-room/${roomNumber}`)
+            .then((response) => {
+                console.log('Quarto deletado com sucesso:', response.data);
+                // Atualiza a lista de quartos após a exclusão
+                setRooms((prevRooms) => prevRooms.filter((room) => room.room_number !== roomNumber));
+            })
+            .catch((error) => {
+                console.error('Erro ao deletar o quarto:', error);
+            });
+    };
+
     // const handleButtonClick = (room: string) => {
     //     const roomName = room;
     //     const checkInDate = "2025-01-01"; // Aqui você pode pegar a data de check-in do usuário
@@ -124,7 +137,7 @@ export default function Dashboard() {
                                                 />
                                             </DialogContent>
                                         </Dialog>
-                                        <Button variant="ghost">
+                                        <Button variant="ghost" onClick={() => handleDeleteRoom(room.room_number)}>
                                             <Trash />
                                         </Button>
                                         {/* apagar, necessita de criar a função */}
