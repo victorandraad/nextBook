@@ -99,8 +99,8 @@ export default function Dashboard() {
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
             <Head title="Painel de Controle" />
-            <div className="flex h-screen flex-1 flex-col gap-4 p-4">
-                <div className="flex justify-end">
+            <div className="flex h-screen flex-1 flex-col gap-4 p-4 bg-slate-800">
+                <div className="flex justify-end ">
                     <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
                         <DialogTrigger asChild>
                             <Button>Criar Quarto</Button>
@@ -113,9 +113,9 @@ export default function Dashboard() {
                         </DialogContent>
                     </Dialog>
                 </div>
-                <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+                <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3 ">
                     {rooms.map((room) => (
-                        <Card key={room.room_number} className="transition-shadow hover:shadow-lg">
+                        <Card key={room.room_number} className="hover:shadow-lg transition-shadow bg-slate-950">
                             <CardHeader>
                                 <div className="flex items-center justify-between">
                                     <CardTitle className="">Quarto {room.room_number}</CardTitle>
@@ -145,10 +145,10 @@ export default function Dashboard() {
                                 </div>
                             </CardHeader>
                             <CardContent className="space-y-4">
-                                <div className="flex items-center justify-between">
-                                    <div className="flex items-center gap-2">
-                                        <Users className="text-muted-foreground h-5 w-5" />
-                                        <span className="text-muted-foreground text-sm">
+                                <div className="flex items-center justify-between ">
+                                    <div className="flex items-center gap-2 ">
+                                        <Users className="h-5 w-5 text-muted-foreground" />
+                                        <span className="text-sm text-muted-foreground">
                                             {room.living_quarters} {room.living_quarters === 1 ? 'pessoa' : 'pessoas'}
                                         </span>
                                     </div>
