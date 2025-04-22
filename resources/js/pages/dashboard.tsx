@@ -99,7 +99,7 @@ export default function Dashboard() {
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
             <Head title="Painel de Controle" />
-            <div className="flex h-screen flex-1 flex-col gap-4 p-4 bg-slate-800">
+            <div className="flex h-screen flex-1 flex-col gap-4 p-4">
                 <div className="flex justify-end ">
                     <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
                         <DialogTrigger asChild>
@@ -113,12 +113,12 @@ export default function Dashboard() {
                         </DialogContent>
                     </Dialog>
                 </div>
-                <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3 ">
+                <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
                     {rooms.map((room) => (
-                        <Card key={room.room_number} className="hover:shadow-lg transition-shadow bg-slate-950">
+                        <Card key={room.room_number} className="hover:shadow-lg transition-shadow">
                             <CardHeader>
                                 <div className="flex items-center justify-between">
-                                    <CardTitle className="">Quarto {room.room_number}</CardTitle>
+                                    <CardTitle>Quarto {room.room_number}</CardTitle>
                                     <div className="space-x-2">
                                         <Dialog>
                                             <DialogTrigger asChild>
@@ -140,36 +140,30 @@ export default function Dashboard() {
                                         <Button variant="ghost" onClick={() => handleDeleteRoom(room.room_number)}>
                                             <Trash />
                                         </Button>
-                                        {/* apagar, necessita de criar a função */}
                                     </div>
                                 </div>
                             </CardHeader>
                             <CardContent className="space-y-4">
-                                <div className="flex items-center justify-between ">
-                                    <div className="flex items-center gap-2 ">
+                                <div className="flex items-center justify-between">
+                                    <div className="flex items-center gap-2">
                                         <Users className="h-5 w-5 text-muted-foreground" />
                                         <span className="text-sm text-muted-foreground">
                                             {room.living_quarters} {room.living_quarters === 1 ? 'pessoa' : 'pessoas'}
                                         </span>
                                     </div>
                                     <div className="flex items-center gap-2">
-                                        <BedDouble className="text-muted-foreground h-5 w-5" />
-                                        <span className="text-muted-foreground text-sm">
+                                        <BedDouble className="h-5 w-5 text-muted-foreground" />
+                                        <span className="text-sm text-muted-foreground">
                                             {room.beds} {room.beds === 1 ? 'cama' : 'camas'}
                                         </span>
                                     </div>
                                 </div>
-                                {room.balcony ? (
                                     <div className="flex items-center gap-2">
-                                        <Home className="text-muted-foreground h-5 w-5" />
-                                        <span className="text-muted-foreground text-sm">Com varanda</span>
+                                    <Home className="h-5 w-5 text-muted-foreground" />
+                                    <span className="text-sm text-muted-foreground">
+                                        {room.balcony ? 'Com varanda' : 'Sem varanda'}
+                                    </span>
                                     </div>
-                                ) : (
-                                    <div className="flex items-center gap-2">
-                                        <Home className="text-muted-foreground h-5 w-5" />
-                                        <span className="text-muted-foreground text-sm">Sem varanda</span>
-                                    </div>
-                                )}
                                 <div className="flex w-full justify-end pt-4">
                                     <PopUp
                                         triggerText="Ver Reservas"

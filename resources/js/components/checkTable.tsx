@@ -41,6 +41,7 @@ import {
 import { CreateReservationForm } from './CreateReservationForm';
 import { EditReservationForm } from './editReservationsFrom';
 import { useToast } from '@/components/ui/use-toast';
+import { Checkbox } from "@/components/ui/checkbox";
 
 // interface delInterface {
 //     del: (check_in_date: Date[], check_out_date: Date[]) => void;
@@ -177,20 +178,16 @@ export function CheckTable(props: room_number): React.ReactElement {
                 );
             },
             cell: ({ row }) => (
-                <input
-                    type="checkbox"
+                <Checkbox
                     checked={row.getIsSelected()}
-                    onChange={(event) => {
-                        const value = event.target.checked;
-                        row.toggleSelected(value);
-
+                    onCheckedChange={(value) => {
+                        row.toggleSelected(!!value);
                         setBoxSelect_i((prev) => {
                             const newValues = value
                                 ? [...prev, row.original.check_in_date]
                                 : prev.filter((d) => row.original.check_in_date instanceof Date && d.getTime() !== row.original.check_in_date.getTime());
                             return newValues;
                         });
-
                         setBoxSelect_f((prev) => {
                             const newValues = value
                                 ? [...prev, row.original.check_out_date]
@@ -199,7 +196,6 @@ export function CheckTable(props: room_number): React.ReactElement {
                         });
                     }}
                     aria-label="Select row"
-                    className="peer border-input bg-background checked:bg-primary checked:border-primary checked:text-primary-foreground focus-visible:ring-ring/50 focus-visible:border-ring aria-[invalid=true]:border-destructive aria-[invalid=true]:ring-destructive/20 dark:aria-[invalid=true]:ring-destructive/40 relative size-4 shrink-0 cursor-pointer appearance-none rounded-[4px] border shadow-xs transition-shadow outline-none after:absolute after:top-1/2 after:left-1/2 after:h-2 after:w-2 after:-translate-x-1/2 after:-translate-y-1/2 after:scale-0 after:rotate-[-45deg] after:border-b-2 after:border-l-2 after:border-black after:transition-transform after:duration-150 after:ease-in-out after:content-[''] checked:after:scale-100 focus-visible:ring-[3px] disabled:cursor-not-allowed disabled:opacity-50"
                 />
             ),
             enableSorting: false,
