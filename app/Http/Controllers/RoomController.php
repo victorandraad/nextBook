@@ -54,4 +54,28 @@ class RoomController extends Controller
 
         return response()->json(['message' => 'Quarto deletado com sucesso'], 200);
     }
+
+    public function update(Request $request, $roomNumber)
+    {
+        $room = Rooms::find($roomNumber);
+
+        if (!$room) {
+            return response()->json(['message' => 'Quarto não encontrado'], 404);
+        }
+
+        $validateData = $request->validate([
+            'living_quarters' => 'required|integer|min:1',
+            'beds' => 'required|integer|min:1',
+            'balcony' => 'boolean',
+        ], [
+            'living_quarters.required' => 'O número de pessoas é obrigatório',
+            'living_quarters.min' => 'O número de pessoas deve ser maior que 0',
+            'beds.required' => 'O número de camas é obrigatório',
+            'beds.min' => 'O número de camas deve ser maior que 0',
+        ]);
+
+        $room->update($validateData);
+
+        return response()->json($room, 200);
+    }
 }

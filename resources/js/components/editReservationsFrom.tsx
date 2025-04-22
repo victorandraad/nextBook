@@ -15,6 +15,7 @@ const formSchema = z
         check_in_date: z.string().min(1, 'Data de entrada é obrigatória'),
         check_out_date: z.string().min(1, 'Data de saída é obrigatória'),
         room_number: z.number(),
+        id: z.number(),
     })
     .refine(
         (data) => {
@@ -38,10 +39,11 @@ export interface EditReservationFormProps {
     check_in_date: Date;
     check_out_date: Date;
     name: string;
+    id: number;
     onSuccess: () => void;
 }
 
-export function EditReservationForm({ roomNumber, check_in_date, check_out_date, name, onSuccess }: EditReservationFormProps) {
+export function EditReservationForm({ roomNumber, check_in_date, check_out_date, name, id, onSuccess }: EditReservationFormProps) {
     const [isLoading, setIsLoading] = useState(false);
     const { toast } = useToast();
 
@@ -52,6 +54,7 @@ export function EditReservationForm({ roomNumber, check_in_date, check_out_date,
             room_number: roomNumber,
             check_in_date: check_in_date.toString().split('T')[0],
             check_out_date: check_out_date.toString().split('T')[0],
+            id: id,
         },
     });
 
