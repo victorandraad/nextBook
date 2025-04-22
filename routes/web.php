@@ -18,6 +18,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
     Route::post('/create-room', [RoomController::class, 'store']);
 
+    Route::delete('/delete-room/{roomNumber}', [RoomController::class, 'destroy']);
+
     Route::post('/book-a-room', [ClientController::class, 'store']);
 
     Route::post('/delete-book', [ClientController::class, 'unbook']);

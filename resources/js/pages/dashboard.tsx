@@ -4,7 +4,8 @@ import { EditRoomForm } from '@/components/editRoomForm';
 import { PopUp } from '@/components/pop-up';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, DialogDescription } from '@/components/ui/dialog';
+import { useToast } from '@/components/ui/use-toast';
 import AppLayout from '@/layouts/app-layout';
 import { type BreadcrumbItem } from '@/types';
 import { Head } from '@inertiajs/react';
@@ -33,6 +34,9 @@ type Room = {
 export default function Dashboard() {
     const [rooms, setRooms] = useState<Room[]>([]);
     const [isDialogOpen, setIsDialogOpen] = useState(false);
+    const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
+    const [roomToDelete, setRoomToDelete] = useState<number | null>(null);
+    const { toast } = useToast();
 
     const handleSuccess = () => {
         setIsDialogOpen(false);
@@ -59,15 +63,33 @@ export default function Dashboard() {
     }, []);
 
     const handleDeleteRoom = (roomNumber: number) => {
+        setRoomToDelete(roomNumber);
+        setIsDeleteDialogOpen(true);
+    };
+
+    const confirmDelete = () => {
+        if (!roomToDelete) return;
+
         axios
-            .delete(`/delete-room/${roomNumber}`)
+            .delete(`/delete-room/${roomToDelete}`)
             .then((response) => {
                 console.log('Quarto deletado com sucesso:', response.data);
-                // Atualiza a lista de quartos após a exclusão
-                setRooms((prevRooms) => prevRooms.filter((room) => room.room_number !== roomNumber));
+                setRooms((prevRooms) => prevRooms.filter((room) => room.room_number !== roomToDelete));
+                toast({
+                    title: 'Sucesso',
+                    description: 'Quarto deletado com sucesso',
+                });
             })
             .catch((error) => {
-                console.error('Erro ao deletar o quarto:', error);
+                toast({
+                    title: 'Erro',
+                    description: error.response.data.message,
+                    variant: 'destructive',
+                });
+            })
+            .finally(() => {
+                setIsDeleteDialogOpen(false);
+                setRoomToDelete(null);
             });
     };
 
@@ -129,18 +151,17 @@ export default function Dashboard() {
                                                     <DialogTitle>Editar Quarto</DialogTitle>
                                                 </DialogHeader>
                                                 <EditRoomForm 
-                                                onSuccess={handleSuccess}
-                                                camas={room.beds}
-                                                numero_quarto={room.room_number}
-                                                varanda={room.balcony}
-                                                pessoas={room.living_quarters}
+                                                    onSuccess={handleSuccess}
+                                                    camas={room.beds}
+                                                    numero_quarto={room.room_number}
+                                                    varanda={room.balcony}
+                                                    pessoas={room.living_quarters}
                                                 />
                                             </DialogContent>
                                         </Dialog>
                                         <Button variant="ghost" onClick={() => handleDeleteRoom(room.room_number)}>
                                             <Trash />
                                         </Button>
-                                        {/* apagar, necessita de criar a função */}
                                     </div>
                                 </div>
                             </CardHeader>
@@ -181,6 +202,25 @@ export default function Dashboard() {
                         </Card>
                     ))}
                 </div>
+
+                <Dialog open={isDeleteDialogOpen} onOpenChange={setIsDeleteDialogOpen}>
+                    <DialogContent>
+                        <DialogHeader>
+                            <DialogTitle>Confirmar Exclusão</DialogTitle>
+                            <DialogDescription>
+                                Tem certeza que deseja excluir o quarto {roomToDelete}? Esta ação não pode ser desfeita.
+                            </DialogDescription>
+                        </DialogHeader>
+                        <div className="flex justify-end gap-2">
+                            <Button variant="outline" onClick={() => setIsDeleteDialogOpen(false)}>
+                                Cancelar
+                            </Button>
+                            <Button variant="destructive" onClick={confirmDelete}>
+                                Excluir
+                            </Button>
+                        </div>
+                    </DialogContent>
+                </Dialog>
             </div>
         </AppLayout>
     );

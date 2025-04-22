@@ -34,4 +34,24 @@ class RoomController extends Controller
 
         return response()->json($room, 201);
     }
+
+    public function destroy($roomNumber)
+    {
+        $room = Rooms::find($roomNumber);
+
+        if (!$room) {
+            return response()->json(['message' => 'Quarto não encontrado'], 404);
+        }
+
+        // Check if the room has any active reservations
+        $hasReservations = Clients::where('room_number', $roomNumber)->exists();
+
+        if ($hasReservations) {
+            return response()->json(['message' => 'Não é possível deletar um quarto com reservas ativas'], 403);
+        }
+
+        $room->delete();
+
+        return response()->json(['message' => 'Quarto deletado com sucesso'], 200);
+    }
 }
