@@ -6,14 +6,14 @@ import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { useToast } from '@/components/ui/use-toast';
-import { AxiosError } from 'axios';
+import axios, { AxiosError } from 'axios';
 import { Switch } from '@/components/ui/switch';
 
 const formSchema = z.object({
     room_number: z.number().min(1, 'O número do quarto deve ser maior que 0'),
     living_quarters: z.number().min(1, 'O número de pessoas deve ser maior que 0'),
     beds: z.number().min(1, 'O número de camas deve ser maior que 0'),
-    balcony: z.boolean(),
+    balcony: z.boolean().optional(),
 });
 
 type FormValues = z.infer<typeof formSchema>;
@@ -36,20 +36,26 @@ export function EditRoomForm({ onSuccess, numero_quarto, camas, varanda, pessoas
             room_number: numero_quarto,
             living_quarters: pessoas,
             beds: camas,
-            balcony: varanda,
+            balcony: varanda || false,
         },
     });
 
-    async function onSubmit() {
+    async function onSubmit(data: FormValues) {
         setIsLoading(true);
         try {
             // console.log('Dados do formulário:', data);
-            // await axios.put(`/edit-room/${numero_quarto}`, data); // Atualiza o quarto
-
-            toast({
-                title: 'Sucesso!',
-                description: 'Quarto atualizado com sucesso.',
-            });
+            await axios.put(`/edit-room/${numero_quarto}`, data).then(() => {
+                toast({
+                    title: 'Sucesso!',
+                    description: 'Quarto atualizado com sucesso.',
+                });
+            }).catch((error) => {
+                toast({
+                    title: 'Erro!',
+                    description: error.response.data.message,
+                    variant: 'destructive',
+                });
+            }); // Atualiza o quarto
 
             onSuccess?.();
         } catch (error: unknown) {
@@ -78,8 +84,12 @@ export function EditRoomForm({ onSuccess, numero_quarto, camas, varanda, pessoas
                                     type="number" 
                                     min="1"
                                     {...field}
-                                    onChange={(e) => field.onChange(Number(e.target.value))}
-                                    disabled // Número do quarto não pode ser editado
+                                    value={field.value || ''}
+                                    onChange={(e) => {
+                                        const value = e.target.value;
+                                        field.onChange(value === '' ? '' : Number(value));
+                                    }}
+                                    disabled
                                 />
                             </FormControl>
                             <FormMessage />
@@ -98,7 +108,11 @@ export function EditRoomForm({ onSuccess, numero_quarto, camas, varanda, pessoas
                                     type="number" 
                                     min="1"
                                     {...field}
-                                    onChange={(e) => field.onChange(Number(e.target.value))}
+                                    value={field.value || ''}
+                                    onChange={(e) => {
+                                        const value = e.target.value;
+                                        field.onChange(value === '' ? '' : Number(value));
+                                    }}
                                 />
                             </FormControl>
                             <FormMessage />
@@ -117,7 +131,11 @@ export function EditRoomForm({ onSuccess, numero_quarto, camas, varanda, pessoas
                                     type="number" 
                                     min="1"
                                     {...field}
-                                    onChange={(e) => field.onChange(Number(e.target.value))}
+                                    value={field.value || ''}
+                                    onChange={(e) => {
+                                        const value = e.target.value;
+                                        field.onChange(value === '' ? '' : Number(value));
+                                    }}
                                 />
                             </FormControl>
                             <FormMessage />

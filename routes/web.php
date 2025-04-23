@@ -18,11 +18,17 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
     Route::post('/create-room', [RoomController::class, 'store']);
 
+    Route::delete('/delete-room/{roomNumber}', [RoomController::class, 'destroy']);
+
+    Route::put('/edit-room/{roomNumber}', [RoomController::class, 'update']);
+
     Route::post('/book-a-room', [ClientController::class, 'store']);
 
     Route::post('/delete-book', [ClientController::class, 'unbook']);
 
     Route::post('/books', [ClientController::class, 'getBooks']);
+
+    Route::put('/update-reservation', [ClientController::class, 'update']);
 });
 
 

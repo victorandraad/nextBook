@@ -106,6 +106,53 @@ class ClientController extends Controller
 
     }
 
+    public function update(Request $request)
+    {
+        $validateData = $request->validate([
+            'id' => 'required|integer|exists:clients,id',
+            'name' => 'required|string|max:255',
+            'check_in_date' => 'required|date|date_format:Y-m-d',
+            'check_out_date' => 'required|date|date_format:Y-m-d|after:check_in_date',
+            'room_number' => 'required|integer|exists:rooms,room_number',
+        ], [
+            "id.required" => "invalid reservation id",
+            "id.exists" => "reservation not found",
+            "name.required" => "invalid name",
+            "check_in_date.required" => "invalid check in date",
+            "check_in_date.date_format" => "invalid check in date",
+            "check_out_date.required" => "invalid check out date",
+            "check_out_date.date_format" => "invalid check out date",
+            "room_number.exists" => "invalid room number",
+        ]);
+
+        // Check if the new dates conflict with other reservations
+        $existingReservations = Clients::where('room_number', $validateData['room_number'])
+            ->where('id', '!=', $validateData['id'])
+            ->get();
+
+        foreach ($existingReservations as $reservation) {
+            $checkInDate = new \DateTime($reservation->check_in_date);
+            $checkOutDate = new \DateTime($reservation->check_out_date);
+            $newCheckIn = new \DateTime($validateData['check_in_date']);
+            $newCheckOut = new \DateTime($validateData['check_out_date']);
+
+            if (($newCheckIn >= $checkInDate && $newCheckIn <= $checkOutDate) ||
+                ($newCheckOut >= $checkInDate && $newCheckOut <= $checkOutDate)) {
+                return response()->json(["reserved"], 403);
+            }
+        }
+
+        $reservation = Clients::find($validateData['id']);
+        $reservation->update([
+            'name' => $validateData['name'],
+            'check_in_date' => $validateData['check_in_date'],
+            'check_out_date' => $validateData['check_out_date'],
+            'room_number' => $validateData['room_number'],
+        ]);
+
+        return response()->json(["success"], 200);
+    }
+
     // $clientsBooks = Clients::select("check_in_date", "check_out_date")->where("room_number", $validateData["room_number"])->get();
     
     // $teste = Clients::select("room_number")

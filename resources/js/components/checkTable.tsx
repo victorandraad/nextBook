@@ -250,6 +250,7 @@ export function CheckTable(props: room_number): React.ReactElement {
                                 <DialogTitle>Editar Reserva</DialogTitle>
                             </DialogHeader>
                             <EditReservationForm 
+                                id={Number(row.original.id)}
                                 roomNumber={props.room_number} 
                                 check_in_date={row.original.check_in_date} 
                                 check_out_date={row.original.check_out_date} 
